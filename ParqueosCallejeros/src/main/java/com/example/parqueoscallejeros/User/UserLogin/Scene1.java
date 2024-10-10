@@ -103,11 +103,12 @@ public class Scene1 {
                 // Si la inserción es exitosa, puedes mostrar un mensaje de éxito
                 // Si la inserción es exitosa, puedes mostrar un mensaje de éxito
                 String message =
-                        "Bienvenido a la aplicacion de correos callejeros " + nombreUsuario.getText() + "\n" +
-                                "Este correo incluye el codigo de verificacion que usted debe de ingresar para poder activar su usuario" + "\n" +
-                                "El codigo de verificacion suyo es: " + validacionString + "\n" +
-                                " Muchas gracias por confiar en nosotros" + "\n" +
-                                "Atentamente: Parqueos Callejeros S.A";
+                        "<p>Bienvenido a la aplicación de correos callejeros, " + nombreUsuario.getText() + ",</p>" +
+                                "<p>Este correo incluye el código de verificación que usted debe ingresar para activar su usuario.</p>" +
+                                "<p>El código de verificación suyo es: <strong>" + validacionString + "</strong></p>" +
+                                "<p>Muchas gracias por confiar en nosotros.</p>" +
+                                "<p>Atentamente,<br>Parqueos Callejeros S.A</p>";
+                
                 EnvioCorreos envioCorreos = new EnvioCorreos();
                 envioCorreos.createEmail(correoUsuario.getText(), "Confirmacion Correos Callejeros", message);
                 envioCorreos.sendEmail();
