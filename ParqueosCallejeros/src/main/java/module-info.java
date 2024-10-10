@@ -9,6 +9,10 @@ module com.example.parqueoscallejeros {
     requires eu.hansolo.tilesfx;
     requires java.sql;
 
+    requires java.mail; // Necesaria para enviar correos
+    requires jakarta.activation;
+    requires jdk.localedata; // Añade esta línea si usas Jakarta Activation
+
     opens com.example.parqueoscallejeros to javafx.fxml;
     opens com.example.parqueoscallejeros.User.UserLogin to javafx.fxml;  // Abre el paquete para FXML
 

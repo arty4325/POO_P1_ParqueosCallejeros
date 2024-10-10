@@ -1,5 +1,6 @@
 package com.example.parqueoscallejeros.User.UserLogin;
 
+import com.example.parqueoscallejeros.EnvioCorreos;
 import com.example.parqueoscallejeros.dataBase.DatabaseManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -12,6 +13,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+import javax.mail.MessagingException;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Date;
@@ -69,49 +71,54 @@ public class Scene1 {
         stage.show();
     }
 
-    public void handleData(ActionEvent event) {
-        //nombreUsuario.getText();
-        /**
-        System.out.println(nombreUsuario.getText());
-        System.out.println(apellidoUsuario.getText());
-        System.out.println(telefonoUsuario.getText());
-        System.out.println(correoUsuario.getText());
-        System.out.println(direccionUsuario.getText());
-        System.out.println(tarjetaUsuario.getText());
-        System.out.println(vencimientoTarjeta.getValue());
-        System.out.println(idUsuario.getText());
-        System.out.println(pinUsuario.getText());
-         **/
-        if(validarDatos()){
-            System.out.println("Datos validos");
+    public void handleData(ActionEvent event) throws MessagingException {
+        EnvioCorreos envioCorreos = new EnvioCorreos();
+
+        envioCorreos.createEmail("arturo.acuna.duran@gmail.com", "PRUEBA", "PRUEBA");
+        envioCorreos.sendEmail();
+
+        if (validarDatos()) {
+            System.out.println("Datos válidos");
             DatabaseManager databaseManager = new DatabaseManager();
 
             Random random = new Random();
             int validacion = random.nextInt(900) + 100; // Genera un número entre 100 y 999
-            System.out.println("Código de validación: " + validacion); // este es el numero de validacion
+            System.out.println("Código de validación: " + validacion); // este es el número de validación
             String validacionString = Integer.toString(validacion);
 
             LocalDate fechaActual = LocalDate.now();
-            System.out.println("Fecha de nacimiento: " + fechaActual.toString());
+            System.out.println("Fecha actual: " + fechaActual.toString());
 
-            databaseManager.insertarUsuario(
-                    nombreUsuario.getText(),
-                    apellidoUsuario.getText(),
-                    telefonoUsuario.getText(),
-                    correoUsuario.getText(),
-                    direccionUsuario.getText(),
-                    tarjetaUsuario.getText(),
-                    String.valueOf(vencimientoTarjeta.getValue()),
-                    validacionString,
-                    fechaActual,
-                    idUsuario.getText(),
-                    pinUsuario.getText(),
-                    0
-            );
-
-
+            try {
+                // Intentar insertar el usuario en la base de datos
+                databaseManager.insertarUsuario(
+                        nombreUsuario.getText(),
+                        apellidoUsuario.getText(),
+                        telefonoUsuario.getText(),
+                        correoUsuario.getText(),
+                        direccionUsuario.getText(),
+                        tarjetaUsuario.getText(),
+                        String.valueOf(vencimientoTarjeta.getValue()),
+                        validacionString,
+                        fechaActual,
+                        idUsuario.getText(),
+                        pinUsuario.getText(),
+                        0
+                );
+                // Si la inserción es exitosa, puedes mostrar un mensaje de éxito
+                infoLabel.setText("Usuario registrado correctamente.");
+            } catch (Exception e) {
+                // Captura cualquier excepción que ocurra durante la inserción en la base de datos
+                infoLabel.setText("No se pudo subir la información a la base de datos.");
+                System.err.println("Error al insertar el usuario: " + e.getMessage());
+                e.printStackTrace(); // Para imprimir el error completo en la consola
+            }
+        } else {
+            // Si los datos no son válidos, mostrar un mensaje al usuario
+            infoLabel.setText("Por favor, complete todos los campos correctamente.");
         }
     }
+
 
     // Método para validar los datos del formulario
     public boolean validarDatos() {
