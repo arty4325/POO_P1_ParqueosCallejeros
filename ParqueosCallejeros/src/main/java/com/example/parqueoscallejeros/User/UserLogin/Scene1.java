@@ -55,7 +55,21 @@ public class Scene1 {
     @FXML
     private Label infoLabel;
 
-    public void switchToScene1(ActionEvent event) throws IOException {
+
+    @FXML
+    private Label verifyLabel;
+
+    @FXML
+    private TextField idUsuarioVal;
+
+    @FXML
+    private TextField idPinVal;
+
+    @FXML
+    private TextField idCodigoVal;
+
+
+    public void switchToScene1(ActionEvent event) throws IOException { // INICIO
         Parent root = FXMLLoader.load(getClass().getResource("/com/example/parqueoscallejeros/User/UserLogin/Scene1.fxml"));
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -63,12 +77,38 @@ public class Scene1 {
         stage.show();
     }
 
-    public void switchToScene2(ActionEvent event) throws IOException {
+    public void switchToScene2(ActionEvent event) throws IOException { // REGISTRO
         Parent root = FXMLLoader.load(getClass().getResource("/com/example/parqueoscallejeros/User/UserLogin/Scene2.fxml"));
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
+    }
+
+    public void switchToScene3(ActionEvent event) throws IOException { // REGISTRO
+        Parent root = FXMLLoader.load(getClass().getResource("/com/example/parqueoscallejeros/User/UserLogin/Scene3.fxml"));
+        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    public void sendVerificationInfo(ActionEvent event) throws IOException {
+        // Aqui tengo que programar lo que pasa cuando se envia la informacion de la validacion
+        /**
+        System.out.println(idUsuarioVal.getText());
+        System.out.println(idPinVal.getText());
+        System.out.println(idCodigoVal.getText());
+         **/
+
+        DatabaseManager databaseManager = new DatabaseManager();
+        if(databaseManager.verificarUsuario(idUsuarioVal.getText(), idPinVal.getText(), idCodigoVal.getText())){
+            //System.out.println("VALIDADO");
+            verifyLabel.setText("Se logro validar con exito el usuario");
+        } else {
+            verifyLabel.setText("Los datos de validacion no son correctos");
+        }
+
     }
 
     public void handleData(ActionEvent event) throws MessagingException {
@@ -108,11 +148,17 @@ public class Scene1 {
                                 "<p>El código de verificación suyo es: <strong>" + validacionString + "</strong></p>" +
                                 "<p>Muchas gracias por confiar en nosotros.</p>" +
                                 "<p>Atentamente,<br>Parqueos Callejeros S.A</p>";
-                
+
                 EnvioCorreos envioCorreos = new EnvioCorreos();
                 envioCorreos.createEmail(correoUsuario.getText(), "Confirmacion Correos Callejeros", message);
                 envioCorreos.sendEmail();
                 infoLabel.setText("Usuario registrado correctamente.");
+                // Aqui me tengo que ir a la ventana que me permite autenticar el usuario
+                Parent root = FXMLLoader.load(getClass().getResource("/com/example/parqueoscallejeros/User/UserLogin/Scene3.fxml"));
+                stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+                scene = new Scene(root);
+                stage.setScene(scene);
+                stage.show();
             } catch (Exception e) {
                 // Captura cualquier excepción que ocurra durante la inserción en la base de datos
                 infoLabel.setText("No se pudo subir la información a la base de datos.");

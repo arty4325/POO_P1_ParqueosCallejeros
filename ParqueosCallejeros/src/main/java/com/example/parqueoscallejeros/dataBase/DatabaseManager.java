@@ -65,6 +65,41 @@ public class DatabaseManager {
         }
     }
 
+    public boolean verificarUsuario(String identificacionUsuario, String pin, String codigoValidacion) {
+        String selectSql = "SELECT codigo_validacion FROM Usuarios WHERE identificacion_usuario = ? AND pin = ?";
+        String updateSql = "UPDATE Usuarios SET verificado = 1 WHERE identificacion_usuario = ? AND pin = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement selectPstmt = conn.prepareStatement(selectSql);
+             PreparedStatement updatePstmt = conn.prepareStatement(updateSql)) {
+
+            // Preparar la consulta select
+            selectPstmt.setString(1, identificacionUsuario);
+            selectPstmt.setString(2, pin);
+
+            // Ejecutar la consulta select
+            var rs = selectPstmt.executeQuery();
+
+            // Verificar si el usuario fue encontrado y si el código de validación coincide
+            if (rs.next()) {
+                String codigoValidacionDb = rs.getString("codigo_validacion");
+                if (codigoValidacionDb.equals(codigoValidacion)) {
+                    // Si el código de validación coincide, actualizamos el campo "verificado"
+                    updatePstmt.setString(1, identificacionUsuario);
+                    updatePstmt.setString(2, pin);
+                    updatePstmt.executeUpdate(); // Ejecuta la actualización
+                    return true; // La verificación fue exitosa
+                }
+            }
+
+            return false; // Si no se encontró el usuario o el código de validación no coincide
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false; // Si algo falla, se retorna false
+        }
+    }
+
+
     // Método para insertar un vehículo
     public boolean insertarVehiculo(int idUsuario, String placa, String marca, String modelo) {
         String sql = "INSERT INTO Vehiculos (id_usuario, placa, marca, modelo) VALUES (?, ?, ?, ?)";
