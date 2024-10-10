@@ -72,11 +72,6 @@ public class Scene1 {
     }
 
     public void handleData(ActionEvent event) throws MessagingException {
-        EnvioCorreos envioCorreos = new EnvioCorreos();
-
-        envioCorreos.createEmail("arturo.acuna.duran@gmail.com", "PRUEBA", "PRUEBA");
-        envioCorreos.sendEmail();
-
         if (validarDatos()) {
             System.out.println("Datos válidos");
             DatabaseManager databaseManager = new DatabaseManager();
@@ -106,6 +101,16 @@ public class Scene1 {
                         0
                 );
                 // Si la inserción es exitosa, puedes mostrar un mensaje de éxito
+                // Si la inserción es exitosa, puedes mostrar un mensaje de éxito
+                String message =
+                        "Bienvenido a la aplicacion de correos callejeros " + nombreUsuario.getText() + "\n" +
+                                "Este correo incluye el codigo de verificacion que usted debe de ingresar para poder activar su usuario" + "\n" +
+                                "El codigo de verificacion suyo es: " + validacionString + "\n" +
+                                " Muchas gracias por confiar en nosotros" + "\n" +
+                                "Atentamente: Parqueos Callejeros S.A";
+                EnvioCorreos envioCorreos = new EnvioCorreos();
+                envioCorreos.createEmail(correoUsuario.getText(), "Confirmacion Correos Callejeros", message);
+                envioCorreos.sendEmail();
                 infoLabel.setText("Usuario registrado correctamente.");
             } catch (Exception e) {
                 // Captura cualquier excepción que ocurra durante la inserción en la base de datos
@@ -115,7 +120,7 @@ public class Scene1 {
             }
         } else {
             // Si los datos no son válidos, mostrar un mensaje al usuario
-            infoLabel.setText("Por favor, complete todos los campos correctamente.");
+            validarDatos();
         }
     }
 
