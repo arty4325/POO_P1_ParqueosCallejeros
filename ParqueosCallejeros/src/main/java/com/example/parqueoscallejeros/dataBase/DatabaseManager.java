@@ -99,6 +99,33 @@ public class DatabaseManager {
         }
     }
 
+    public boolean iniciarSesion(String identificacionUsuario, String pin) {
+        String sql = "SELECT COUNT(*) FROM Usuarios WHERE identificacion_usuario = ? AND pin = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // Preparar la consulta con los parámetros
+            pstmt.setString(1, identificacionUsuario);
+            pstmt.setString(2, pin);
+
+            // Ejecutar la consulta
+            var rs = pstmt.executeQuery();
+
+            // Verificar si se encontró un usuario con esa combinación
+            if (rs.next()) {
+                int count = rs.getInt(1); // Obtiene el conteo de registros
+                return count > 0; // Retorna true si hay al menos un resultado, de lo contrario false
+            }
+
+            return false; // No se encontró ninguna coincidencia
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false; // Si ocurre algún error, se retorna false
+        }
+    }
+
+
 
     // Método para insertar un vehículo
     public boolean insertarVehiculo(int idUsuario, String placa, String marca, String modelo) {

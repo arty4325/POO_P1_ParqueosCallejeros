@@ -12,6 +12,7 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import org.controlsfx.control.action.Action;
 
 import javax.mail.MessagingException;
 import java.io.IOException;
@@ -68,6 +69,12 @@ public class Scene1 {
     @FXML
     private TextField idCodigoVal;
 
+    @FXML
+    private TextField inicUsuario;
+
+    @FXML
+    private TextField inicContra;
+
 
     public void switchToScene1(ActionEvent event) throws IOException { // INICIO
         Parent root = FXMLLoader.load(getClass().getResource("/com/example/parqueoscallejeros/User/UserLogin/Scene1.fxml"));
@@ -91,6 +98,23 @@ public class Scene1 {
         scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
+    }
+
+    public void switchToScene4(ActionEvent event) throws IOException { // REGISTRO
+        Parent root = FXMLLoader.load(getClass().getResource("/com/example/parqueoscallejeros/User/UserLogin/Scene4.fxml"));
+        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    public void handleSignIn(ActionEvent event){
+        DatabaseManager databaseManager = new DatabaseManager();
+        if(databaseManager.iniciarSesion(inicUsuario.getText(), inicContra.getText())){
+            System.out.println("Se ha iniciado correctamente");
+        } else {
+            System.out.println("No se ha logrado hacer el inicio de sesion");
+        }
     }
 
     public void sendVerificationInfo(ActionEvent event) throws IOException {
@@ -170,6 +194,8 @@ public class Scene1 {
             validarDatos();
         }
     }
+
+
 
 
     // Método para validar los datos del formulario
