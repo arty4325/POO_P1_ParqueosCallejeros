@@ -37,11 +37,11 @@ public class DatabaseManager {
     // Método para insertar un usuario
     public boolean insertarUsuario(String nombre, String apellido, String telefono, String correo,
                                    String direccion, String tarjetaCredito, String fechaVencimiento,
-                                   String codigoValidacion, String placa, LocalDate fechaIngreso,
-                                   String identificacion, String pin) {
+                                   String codigoValidacion, LocalDate fechaIngreso,
+                                   String identificacion, String pin, int verificado) {
         String sql = "INSERT INTO Usuarios (nombre, apellidos, telefono, correo, direccion, tarjeta_credito, " +
-                "fecha_vencimiento, codigo_validacion, fecha_ingreso, identificacion, pin) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "fecha_vencimiento, codigo_validacion, fecha_ingreso, identificacion_usuario, pin, verificado) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -53,9 +53,10 @@ public class DatabaseManager {
             pstmt.setString(6, tarjetaCredito);
             pstmt.setString(7, fechaVencimiento); // Mes y año (ejemplo: "MM/YY")
             pstmt.setString(8, codigoValidacion);
-            pstmt.setString(10, fechaIngreso.toString()); // Convertimos LocalDate a String
-            pstmt.setString(11, identificacion);
-            pstmt.setString(12, pin);
+            pstmt.setString(9, fechaIngreso.toString()); // Convertimos LocalDate a String
+            pstmt.setString(10, identificacion);
+            pstmt.setString(11, pin);
+            pstmt.setInt(12, verificado);
             pstmt.executeUpdate(); // Ejecuta la inserción
             return true; // Inserción fue exitosa
         } catch (SQLException e) {
