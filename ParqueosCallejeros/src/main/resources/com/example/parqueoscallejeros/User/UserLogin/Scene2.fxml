@@ -8,7 +8,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.parqueoscallejeros.User.UserLogin.Scene1">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.parqueoscallejeros.User.UserLogin.RegisterAndLogin">
    <children>
       <Label layoutX="14.0" layoutY="14.0" prefHeight="70.0" prefWidth="211.0" text="Registro">
          <font>
@@ -39,5 +39,6 @@
             <Font size="18.0" />
          </font>
       </Label>
+      <Button fx:id="volver" layoutX="534.0" layoutY="315.0" mnemonicParsing="false" onAction="#switchToScene1" text="Volver" />
    </children>
 </AnchorPane>

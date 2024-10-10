@@ -12,15 +12,13 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import org.controlsfx.control.action.Action;
 
 import javax.mail.MessagingException;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.Random;
 
-public class Scene1 {
+public class RegisterAndLogin {
 
     private Stage stage;
     private Scene scene;
