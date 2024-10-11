@@ -1,5 +1,6 @@
 package com.example.parqueoscallejeros;
 
+import com.example.parqueoscallejeros.dataBase.DatabaseManager;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
@@ -8,6 +9,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
 
 
 public class HelloController {
@@ -24,20 +26,25 @@ public class HelloController {
 
     @FXML
     protected void onBotonPrueba() {
-        if (verificarConexion()) {
-            welcomeText.setText("Conexión a la base de datos exitosa!");
+        // Ejemplo de datos para insertar
+        String nombre = "Oscar";
+        String apellido = "Acuna";
+        String telefono = "71732204"; // Debe ser un número de 8 dígitos
+        String correo = "arturo@acuna.com"; // Asegúrate de que el formato sea correcto
+        String direccion = "Calle Falsa 123"; // Dirección de ejemplo
+        LocalDate fechaIngreso = LocalDate.now(); // Fecha actual
+        String identificacionUsuario = "fernando4325"; // Debe ser único y entre 2 a 25 caracteres
+        String pin = "9904"; // Debe ser un PIN de 4 caracteres
+
+        // Crear una instancia de DatabaseManager
+        DatabaseManager dbManager = new DatabaseManager();
+
+        // Intentar insertar el registro
+        if (dbManager.insertarAdministrador(nombre, apellido, telefono, correo, direccion, fechaIngreso, identificacionUsuario, pin)) {
+            welcomeText.setText("Registro insertado exitosamente!");
         } else {
-            welcomeText.setText("Error al conectar con la base de datos!");
+            welcomeText.setText("Error al insertar el registro!");
         }
     }
-    private boolean verificarConexion() {
-        try (Connection conn = DriverManager.getConnection(DB_URL)) {
-            if (conn != null) {
-                return true; // Conexión fue exitosa
-            }
-        } catch (SQLException e) {
-            e.printStackTrace(); // Puedes registrar el error para más detalles
-        }
-        return false; // Si algo falla, la conexión no fue exitosa
-    }
+
 }
