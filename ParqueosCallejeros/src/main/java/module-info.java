@@ -15,7 +15,10 @@ module com.example.parqueoscallejeros {
 
     opens com.example.parqueoscallejeros to javafx.fxml;
     opens com.example.parqueoscallejeros.User.UserLogin to javafx.fxml;  // Abre el paquete para FXML
+    opens com.example.parqueoscallejeros.User.UserMainFunctions to javafx.fxml;
+
 
     exports com.example.parqueoscallejeros;
     exports com.example.parqueoscallejeros.User.UserLogin;
+    exports com.example.parqueoscallejeros.User.UserMain;
 }

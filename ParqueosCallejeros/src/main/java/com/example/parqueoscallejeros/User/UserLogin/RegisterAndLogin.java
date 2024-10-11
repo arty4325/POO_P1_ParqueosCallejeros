@@ -1,6 +1,7 @@
 package com.example.parqueoscallejeros.User.UserLogin;
 
 import com.example.parqueoscallejeros.EnvioCorreos;
+import com.example.parqueoscallejeros.User.UserMain.MainController;
 import com.example.parqueoscallejeros.dataBase.DatabaseManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -59,6 +60,9 @@ public class RegisterAndLogin {
     private Label verifyLabel;
 
     @FXML
+    private Label signInLabel;
+
+    @FXML
     private TextField idUsuarioVal;
 
     @FXML
@@ -106,12 +110,28 @@ public class RegisterAndLogin {
         stage.show();
     }
 
-    public void handleSignIn(ActionEvent event){
+    public void handleSignIn(ActionEvent event) throws IOException {
         DatabaseManager databaseManager = new DatabaseManager();
         if(databaseManager.iniciarSesion(inicUsuario.getText(), inicContra.getText())){
             System.out.println("Se ha iniciado correctamente");
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/parqueoscallejeros/User/UserMainFunctions/UsuarioMain.fxml"));
+            Parent root = loader.load();
+
+            // Obtén el controlador del nuevo FXML
+            MainController controller = loader.getController();
+
+            // Pasa el valor (por ejemplo, el idUsuario)
+            controller.setUserData(inicUsuario.getText(), inicContra.getText());
+
+            // Cambia la escena
+            stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+            scene = new Scene(root);
+            stage.setScene(scene);
+            stage.show();
         } else {
             System.out.println("No se ha logrado hacer el inicio de sesion");
+            signInLabel.setText("No se ha logrado hacer el inicio de sesion");
         }
     }
 
@@ -166,10 +186,10 @@ public class RegisterAndLogin {
                 // Si la inserción es exitosa, puedes mostrar un mensaje de éxito
                 String message =
                         "<p>Bienvenido a la aplicación de correos callejeros, " + nombreUsuario.getText() + ",</p>" +
-                                "<p>Este correo incluye el código de verificación que usted debe ingresar para activar su usuario.</p>" +
-                                "<p>El código de verificación suyo es: <strong>" + validacionString + "</strong></p>" +
-                                "<p>Muchas gracias por confiar en nosotros.</p>" +
-                                "<p>Atentamente,<br>Parqueos Callejeros S.A</p>";
+                        "<p>Este correo incluye el código de verificación que usted debe ingresar para activar su usuario.</p>" +
+                        "<p>El código de verificación suyo es: <strong>" + validacionString + "</strong></p>" +
+                        "<p>Muchas gracias por confiar en nosotros.</p>" +
+                        "<p>Atentamente,<br>Parqueos Callejeros S.A</p>";
 
                 EnvioCorreos envioCorreos = new EnvioCorreos();
                 envioCorreos.createEmail(correoUsuario.getText(), "Confirmacion Correos Callejeros", message);

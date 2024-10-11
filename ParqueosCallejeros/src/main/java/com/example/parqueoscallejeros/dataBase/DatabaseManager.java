@@ -100,7 +100,7 @@ public class DatabaseManager {
     }
 
     public boolean iniciarSesion(String identificacionUsuario, String pin) {
-        String sql = "SELECT COUNT(*) FROM Usuarios WHERE identificacion_usuario = ? AND pin = ?";
+        String sql = "SELECT COUNT(*) FROM Usuarios WHERE identificacion_usuario = ? AND pin = ? AND verificado = 1";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -124,6 +124,7 @@ public class DatabaseManager {
             return false; // Si ocurre algún error, se retorna false
         }
     }
+
 
 
 
