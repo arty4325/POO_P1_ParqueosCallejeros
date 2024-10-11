@@ -113,7 +113,9 @@ public class RegisterAndLogin {
     public void handleSignIn(ActionEvent event) throws IOException {
         DatabaseManager databaseManager = new DatabaseManager();
         if(databaseManager.iniciarSesion(inicUsuario.getText(), inicContra.getText())){
-            System.out.println("Se ha iniciado correctamente");
+            int id = databaseManager.obtenerIdUsuario(inicUsuario.getText(), inicContra.getText());
+            //String idString = Integer.toString(id);
+            //System.out.println("Se ha iniciado correctamente" + idString);
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/parqueoscallejeros/User/UserMainFunctions/UsuarioMain.fxml"));
             Parent root = loader.load();
@@ -122,7 +124,7 @@ public class RegisterAndLogin {
             MainController controller = loader.getController();
 
             // Pasa el valor (por ejemplo, el idUsuario)
-            controller.setUserData(inicUsuario.getText(), inicContra.getText());
+            controller.setUserData(id, inicUsuario.getText(), inicContra.getText());
 
             // Cambia la escena
             stage = (Stage)((Node)event.getSource()).getScene().getWindow();

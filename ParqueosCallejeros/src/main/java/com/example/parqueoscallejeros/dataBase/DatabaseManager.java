@@ -125,6 +125,32 @@ public class DatabaseManager {
         }
     }
 
+    public Integer obtenerIdUsuario(String identificacionUsuario, String pin) {
+        String sql = "SELECT id FROM Usuarios WHERE identificacion_usuario = ? AND pin = ? AND verificado = 1";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // Preparar la consulta con los parámetros
+            pstmt.setString(1, identificacionUsuario);
+            pstmt.setString(2, pin);
+
+            // Ejecutar la consulta
+            var rs = pstmt.executeQuery();
+
+            // Verificar si se encontró un usuario con esa combinación
+            if (rs.next()) {
+                return rs.getInt("id"); // Retorna el id del usuario encontrado
+            }
+
+            return null; // Retorna null si no se encontró ninguna coincidencia
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null; // Si ocurre algún error, se retorna null
+        }
+    }
+
+
 
 
 
