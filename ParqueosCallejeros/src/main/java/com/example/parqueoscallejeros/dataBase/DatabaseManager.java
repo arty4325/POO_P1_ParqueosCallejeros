@@ -10,11 +10,12 @@ public class DatabaseManager {
     // Ahora le doy la ruta a la base de datos
     private static final String DB_URL = "jdbc:sqlite:databases/parqueoscallejeros.db"; // Ruta relativa
 
-    // Método para insertar un administrador
+    // Método para insertar un administrador con codigo_validacion
     public boolean insertarAdministrador(String nombre, String apellido, String telefono, String correo,
-                                         String direccion, LocalDate fechaIngreso, String identificacionUsuario, String pin) {
-        String sql = "INSERT INTO Administradores (nombre, apellidos, telefono, correo, direccion, fecha_ingreso, identificacion_usuario, pin) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                                         String direccion, LocalDate fechaIngreso, String identificacionUsuario,
+                                         String pin, String codigoValidacion) {
+        String sql = "INSERT INTO Administradores (nombre, apellidos, telefono, correo, direccion, fecha_ingreso, identificacion_usuario, pin, codigo_validacion) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -23,9 +24,10 @@ public class DatabaseManager {
             pstmt.setString(3, telefono);
             pstmt.setString(4, correo);
             pstmt.setString(5, direccion);
-            pstmt.setString(6, fechaIngreso.toString()); // Asegúrate de que la fecha se formatee correctamente
+            pstmt.setString(6, fechaIngreso.toString()); // Convertimos LocalDate a String
             pstmt.setString(7, identificacionUsuario);
             pstmt.setString(8, pin);
+            pstmt.setString(9, codigoValidacion); // Agregamos el código de validación
             pstmt.executeUpdate(); // Ejecuta la inserción
             return true; // Inserción fue exitosa
         } catch (SQLException e) {
@@ -33,6 +35,7 @@ public class DatabaseManager {
             return false; // Si algo falla, la inserción no fue exitosa
         }
     }
+
 
     // Método para insertar un usuario
     public boolean insertarUsuario(String nombre, String apellido, String telefono, String correo,
@@ -98,6 +101,41 @@ public class DatabaseManager {
             return false; // Si algo falla, se retorna false
         }
     }
+
+    public boolean verificarAdministrador(String identificacionAdmin, String pin, String codigoValidacion) {
+        String selectSql = "SELECT codigo_validacion FROM Administradores WHERE identificacion_usuario = ? AND pin = ?";
+        String updateSql = "UPDATE Administradores SET verificado = 1 WHERE identificacion_usuario = ? AND pin = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement selectPstmt = conn.prepareStatement(selectSql);
+             PreparedStatement updatePstmt = conn.prepareStatement(updateSql)) {
+
+            // Preparar la consulta select
+            selectPstmt.setString(1, identificacionAdmin);
+            selectPstmt.setString(2, pin);
+
+            // Ejecutar la consulta select
+            var rs = selectPstmt.executeQuery();
+
+            // Verificar si el administrador fue encontrado y si el código de validación coincide
+            if (rs.next()) {
+                String codigoValidacionDb = rs.getString("codigo_validacion");
+                if (codigoValidacionDb.equals(codigoValidacion)) {
+                    // Si el código de validación coincide, actualizamos el campo "verificado"
+                    updatePstmt.setString(1, identificacionAdmin);
+                    updatePstmt.setString(2, pin);
+                    updatePstmt.executeUpdate(); // Ejecuta la actualización
+                    return true; // La verificación fue exitosa
+                }
+            }
+
+            return false; // Si no se encontró el administrador o el código de validación no coincide
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false; // Si algo falla, se retorna false
+        }
+    }
+
 
     public boolean iniciarSesion(String identificacionUsuario, String pin) {
         String sql = "SELECT COUNT(*) FROM Usuarios WHERE identificacion_usuario = ? AND pin = ? AND verificado = 1";
