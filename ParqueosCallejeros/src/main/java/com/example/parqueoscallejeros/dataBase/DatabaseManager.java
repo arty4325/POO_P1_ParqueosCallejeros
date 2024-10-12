@@ -456,6 +456,25 @@ public class DatabaseManager {
         }
     }
 
+    public boolean eliminarConfiguracionParqueo(int id) {
+        // Verificamos si el ID existe
+        if (!verificarConfiguracionParqueoExistente(id)) {
+            return false; // El ID no existe, no se realiza la eliminación
+        }
+
+        String sql = "DELETE FROM ConfiguracionParqueo WHERE id = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, id); // Establece el ID en la consulta SQL
+            int rowsAffected = pstmt.executeUpdate(); // Ejecuta la eliminación
+            return rowsAffected > 0; // Devuelve true si se eliminó al menos una fila
+        } catch (SQLException e) {
+            e.printStackTrace(); // Puedes registrar el error para más detalles
+            return false; // Si algo falla, la eliminación no fue exitosa
+        }
+    }
+
 
     public boolean verificarConfiguracionParqueoExistente(int id) {
         String sql = "SELECT COUNT(*) FROM ConfiguracionParqueo WHERE id = ?";

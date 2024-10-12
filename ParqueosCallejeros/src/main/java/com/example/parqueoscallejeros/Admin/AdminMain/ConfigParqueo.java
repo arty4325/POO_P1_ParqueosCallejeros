@@ -131,10 +131,38 @@ public class ConfigParqueo {
                           Integer.parseInt(costoMulta.getText())
                           );
               }
+          } else {
+              statusLabel.setText("Hay parqueos ya existentes en el intervalo indicado");
           }
           System.out.println(flag);
         }
     }
+
+    public void handleDeleteData(ActionEvent event) throws IOException { // REGISTRO
+        int inicioEspacio = Integer.parseInt(espaciosInicio.getText());
+        int finEspacio = Integer.parseInt(espaciosFin.getText());
+        boolean flag = true;
+        if(validacionDatosBorrado()) {
+            DatabaseManager databaseManager = new DatabaseManager();
+            for (int i = inicioEspacio; i <= finEspacio; i++) {
+                //System.out.println(databaseManager.verificarConfiguracionParqueoExistente(i));
+                if (databaseManager.verificarConfiguracionParqueoExistente(i)) {
+                    flag = false;
+                }
+            }
+            if (!flag) {
+                for(int i = inicioEspacio; i <= finEspacio; i++){
+                    databaseManager.eliminarConfiguracionParqueo(i);
+                }
+            } else {
+                statusLabel.setText("Hay parqueos que no existen en el intervalo");
+            }
+        }
+
+
+    }
+
+
 
     private boolean validacionDatos() {
         boolean isValid = true;
@@ -215,4 +243,38 @@ public class ConfigParqueo {
         }
         return isValid;
     }
+
+    private boolean validacionDatosBorrado() {
+        boolean isValid = true;
+
+        // Validación de espacios de parqueo (los espacios deben ser números de 1 a 5 dígitos)
+        try {
+            int inicioEspacio = Integer.parseInt(espaciosInicio.getText());
+            int finEspacio = Integer.parseInt(espaciosFin.getText());
+
+            // Verifica que los espacios tengan entre 1 y 5 dígitos
+            if (String.valueOf(inicioEspacio).length() > 5 || String.valueOf(finEspacio).length() > 5) {
+                statusLabel.setText("Error: Los números de los espacios deben tener entre 1 y 5 dígitos.");
+                isValid = false;
+            }
+
+            // Verifica que el espacio de inicio sea menor que el de fin
+            if (inicioEspacio >= finEspacio) {
+                statusLabel.setText("Error: El espacio de inicio debe ser menor que el espacio de fin.");
+                isValid = false;
+            }
+        } catch (NumberFormatException e) {
+            statusLabel.setText("Error: Los espacios de parqueo deben ser números enteros.");
+            isValid = false;
+        }
+
+        // Si todas las validaciones son correctas, se puede proceder
+        if (isValid) {
+            statusLabel.setText("Todos los datos de espacios son válidos.");
+            // Aquí puedes agregar la lógica para continuar, como guardar los datos
+        }
+
+        return isValid;
+    }
+
 }
