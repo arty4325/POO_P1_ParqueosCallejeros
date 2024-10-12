@@ -437,24 +437,41 @@ public class DatabaseManager {
             return false; // El ID ya existe, no se realiza la inserción
         }
 
-        String sql = "INSERT INTO ConfiguracionParqueo (id, horario_inicio, horario_fin, precio_por_hora, tiempo_minimo, costo_multa) " +
+        String sqlConfiguracion = "INSERT INTO ConfiguracionParqueo (id, horario_inicio, horario_fin, precio_por_hora, tiempo_minimo, costo_multa) " +
                 "VALUES (?, ?, ?, ?, ?, ?)";
+        String sqlEspacios = "INSERT INTO EspaciosParqueo (numero_espacio, estado) VALUES (?, ?)";
 
-        try (Connection conn = DriverManager.getConnection(DB_URL);
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, id);
-            pstmt.setString(2, horarioInicio); // Inserta horario_inicio como String
-            pstmt.setString(3, horarioFin);    // Inserta horario_fin como String
-            pstmt.setInt(4, precioPorHora);
-            pstmt.setInt(5, tiempoMinimo);
-            pstmt.setInt(6, costoMulta);
-            pstmt.executeUpdate(); // Ejecuta la inserción
-            return true; // Inserción fue exitosa
+        try (Connection conn = DriverManager.getConnection(DB_URL)) {
+            // Desactivar auto-commit para manejar ambas inserciones en una sola transacción
+            conn.setAutoCommit(false);
+
+            // Inserción en ConfiguracionParqueo
+            try (PreparedStatement pstmt1 = conn.prepareStatement(sqlConfiguracion)) {
+                pstmt1.setInt(1, id);
+                pstmt1.setString(2, horarioInicio); // Inserta horario_inicio como String
+                pstmt1.setString(3, horarioFin);    // Inserta horario_fin como String
+                pstmt1.setInt(4, precioPorHora);
+                pstmt1.setInt(5, tiempoMinimo);
+                pstmt1.setInt(6, costoMulta);
+                pstmt1.executeUpdate(); // Ejecuta la inserción en ConfiguracionParqueo
+            }
+
+            // Inserción en EspaciosParqueos con cantidad_espacios como 0
+            try (PreparedStatement pstmt2 = conn.prepareStatement(sqlEspacios)) {
+                pstmt2.setInt(1, id);
+                pstmt2.setInt(2, 0); // Inserta cantidad_espacios como 0
+                pstmt2.executeUpdate(); // Ejecuta la inserción en EspaciosParqueos
+            }
+
+            // Si todo sale bien, confirma la transacción
+            conn.commit();
+            return true; // Inserciones fueron exitosas
         } catch (SQLException e) {
             e.printStackTrace(); // Puedes registrar el error para más detalles
-            return false; // Si algo falla, la inserción no fue exitosa
+            return false; // Si algo falla, la eliminación no fue exitosa
         }
     }
+
 
     public boolean eliminarConfiguracionParqueo(int id) {
         // Verificamos si el ID existe
@@ -462,18 +479,32 @@ public class DatabaseManager {
             return false; // El ID no existe, no se realiza la eliminación
         }
 
-        String sql = "DELETE FROM ConfiguracionParqueo WHERE id = ?";
+        // Primero eliminamos los registros relacionados en EspaciosParqueo
+        String deleteEspaciosSql = "DELETE FROM EspaciosParqueo WHERE numero_espacio = ?";
+
+        // Luego eliminamos el registro de ConfiguracionParqueo
+        String deleteConfiguracionSql = "DELETE FROM ConfiguracionParqueo WHERE id = ?";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, id); // Establece el ID en la consulta SQL
-            int rowsAffected = pstmt.executeUpdate(); // Ejecuta la eliminación
-            return rowsAffected > 0; // Devuelve true si se eliminó al menos una fila
+             PreparedStatement deleteEspaciosStmt = conn.prepareStatement(deleteEspaciosSql);
+             PreparedStatement deleteConfiguracionStmt = conn.prepareStatement(deleteConfiguracionSql)) {
+
+            // Para eliminar en EspaciosParqueo
+            deleteEspaciosStmt.setInt(1, id);
+            deleteEspaciosStmt.executeUpdate(); // Ejecutamos la eliminación en EspaciosParqueo
+
+            // Para eliminar en ConfiguracionParqueo
+            deleteConfiguracionStmt.setInt(1, id);
+            int rowsAffected = deleteConfiguracionStmt.executeUpdate(); // Ejecutamos la eliminación en ConfiguracionParqueo
+
+            return rowsAffected > 0; // Devuelve true si se eliminó al menos una fila en ConfiguracionParqueo
+
         } catch (SQLException e) {
             e.printStackTrace(); // Puedes registrar el error para más detalles
             return false; // Si algo falla, la eliminación no fue exitosa
         }
     }
+
 
 
     public boolean verificarConfiguracionParqueoExistente(int id) {
