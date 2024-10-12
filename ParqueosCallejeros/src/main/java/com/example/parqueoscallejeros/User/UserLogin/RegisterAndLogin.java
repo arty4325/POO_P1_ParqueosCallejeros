@@ -3,12 +3,14 @@ package com.example.parqueoscallejeros.User.UserLogin;
 import com.example.parqueoscallejeros.EnvioCorreos;
 import com.example.parqueoscallejeros.User.UserMain.MainController;
 import com.example.parqueoscallejeros.dataBase.DatabaseManager;
+import com.sun.source.doctree.SystemPropertyTree;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.chart.PieChart;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -77,6 +79,17 @@ public class RegisterAndLogin {
     @FXML
     private TextField inicContra;
 
+    @FXML
+    private TextField usuarioCambio;
+
+    @FXML
+    private TextField cambioIdentificacion;
+
+    @FXML
+    private TextField cambioCodigo;
+
+    @FXML
+    private TextField cambioPin;
 
     public void switchToScene1(ActionEvent event) throws IOException { // INICIO
         Parent root = FXMLLoader.load(getClass().getResource("/com/example/parqueoscallejeros/User/UserLogin/Scene1.fxml"));
@@ -104,6 +117,23 @@ public class RegisterAndLogin {
 
     public void switchToScene4(ActionEvent event) throws IOException { // REGISTRO
         Parent root = FXMLLoader.load(getClass().getResource("/com/example/parqueoscallejeros/User/UserLogin/Scene4.fxml"));
+        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+
+    public void switchToScene5(ActionEvent event) throws IOException { // REGISTRO
+        Parent root = FXMLLoader.load(getClass().getResource("/com/example/parqueoscallejeros/User/UserLogin/Scene5.fxml"));
+        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    public void switchToScene6(ActionEvent event) throws IOException { // REGISTRO
+        Parent root = FXMLLoader.load(getClass().getResource("/com/example/parqueoscallejeros/User/UserLogin/Scene6.fxml"));
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setScene(scene);
@@ -214,6 +244,68 @@ public class RegisterAndLogin {
             validarDatos();
         }
     }
+
+    public void handleChangeData(ActionEvent event) throws MessagingException, IOException {
+            // usuarioCambio
+            // genero un codigo random
+            Random random = new Random();
+            int validacion = random.nextInt(900) + 100;
+            // Se lo doy a la base de datos
+            DatabaseManager databaseManager = new DatabaseManager();
+            databaseManager.actualizarCodigoCambioUsuario(usuarioCambio.getText(), validacion);
+            String validacionString;
+            validacionString = Integer.toString(validacion);
+            // Me lo mando por correo
+            String correo = databaseManager.obtenerCorreoUsuario(usuarioCambio.getText());
+            System.out.println("Correo: " + correo);
+
+            String message =
+                    "<p>Bienvenido a la aplicación de correos callejeros, " + usuarioCambio.getText() + ",</p>" +
+                            "<p>Usted solicito un codigo para poder cambiar su contraseña.</p>" +
+                            "<p>El código de cambio suyo es: <strong>" + validacionString + "</strong></p>" +
+                            "<p>Muchas gracias por confiar en nosotros.</p>" +
+                            "<p>Atentamente,<br>Parqueos Callejeros S.A</p>";
+
+            EnvioCorreos envioCorreos = new EnvioCorreos();
+            envioCorreos.createEmail(correo, "Cambio de Contraseña " + usuarioCambio.getText(), message);
+            envioCorreos.sendEmail();
+
+        // Me muevo a la otra ventana que me permite ingresar el codigo
+        Parent root = FXMLLoader.load(getClass().getResource("/com/example/parqueoscallejeros/User/UserLogin/Scene6.fxml"));
+        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    public void handleSendNewPin(ActionEvent event) throws IOException { // REGISTRO
+        DatabaseManager databaseManager = new DatabaseManager();
+
+        String identificacion = cambioIdentificacion.getText();
+        String codigoTexto = cambioCodigo.getText();
+        String nuevoPin = cambioPin.getText();
+
+        // Verificar que el código de cambio contenga solo números
+        if (!codigoTexto.matches("\\d+")) {
+            // Mostrar un mensaje de error si el código no es válido
+            System.out.println("El código de cambio debe contener solo números.");
+            // Aquí puedes usar un dialogo de alerta o una etiqueta en la interfaz para mostrar el mensaje
+            return; // Salir del método si la verificación falla
+        }
+
+        // Convertir el código de cambio a int
+        int codigoCambio = Integer.parseInt(codigoTexto);
+
+        // Llamar al método para cambiar el PIN
+        boolean pinCambiado = databaseManager.cambiarPinUsuario(identificacion, codigoCambio, nuevoPin);
+
+        if (pinCambiado) {
+            System.out.println("El PIN ha sido cambiado exitosamente.");
+        } else {
+            System.out.println("Error al cambiar el PIN. Verifica los datos proporcionados.");
+        }
+    }
+
 
 
 

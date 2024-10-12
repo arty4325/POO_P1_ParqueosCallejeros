@@ -11,7 +11,8 @@ module com.example.parqueoscallejeros {
 
     requires java.mail; // Necesaria para enviar correos
     requires jakarta.activation;
-    requires jdk.localedata; // Añade esta línea si usas Jakarta Activation
+    requires jdk.localedata;
+    requires jdk.compiler; // Añade esta línea si usas Jakarta Activation
 
     opens com.example.parqueoscallejeros to javafx.fxml;
     opens com.example.parqueoscallejeros.User.UserLogin to javafx.fxml;  // Abre el paquete para FXML

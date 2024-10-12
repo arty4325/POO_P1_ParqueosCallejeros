@@ -1,9 +1,6 @@
 package com.example.parqueoscallejeros.dataBase;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 import java.time.LocalDate;
 
 public class DatabaseManager {
@@ -260,5 +257,148 @@ public class DatabaseManager {
             return false; // Si algo falla, la inserción no fue exitosa
         }
     }
+
+    // Método para actualizar el codigo_cambio de un usuario
+    public boolean actualizarCodigoCambioUsuario(String identificacionUsuario, int codigoCambio) {
+        String sql = "UPDATE Usuarios SET codigo_cambio = ? WHERE identificacion_usuario = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, codigoCambio); // Asigna el nuevo codigo_cambio
+            pstmt.setString(2, identificacionUsuario); // Asigna la identificacion_usuario
+            int rowsAffected = pstmt.executeUpdate(); // Ejecuta la actualización
+            return rowsAffected > 0; // Retorna true si se actualizó al menos un registro
+        } catch (SQLException e) {
+            e.printStackTrace(); // Puedes registrar el error para más detalles
+            return false; // Si algo falla, la actualización no fue exitosa
+        }
+    }
+
+    // Método para actualizar el codigo_cambio de un administrador
+    public boolean actualizarCodigoCambioAdministrador(String identificacionAdmin, int codigoCambio) {
+        String sql = "UPDATE Administradores SET codigo_cambio = ? WHERE identificacion_usuario = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, codigoCambio); // Asigna el nuevo codigo_cambio
+            pstmt.setString(2, identificacionAdmin); // Asigna la identificacion_usuario
+            int rowsAffected = pstmt.executeUpdate(); // Ejecuta la actualización
+            return rowsAffected > 0; // Retorna true si se actualizó al menos un registro
+        } catch (SQLException e) {
+            e.printStackTrace(); // Puedes registrar el error para más detalles
+            return false; // Si algo falla, la actualización no fue exitosa
+        }
+    }
+
+    // Método para obtener el correo electrónico de un administrador por su identificacion_usuario
+    public String obtenerCorreoAdministrador(String identificacionUsuario) {
+        String sql = "SELECT correo FROM Administradores WHERE identificacion_usuario = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, identificacionUsuario);
+
+            // Ejecutar la consulta
+            ResultSet rs = pstmt.executeQuery();
+
+            // Verificar si se encontró el administrador con esa identificación
+            if (rs.next()) {
+                return rs.getString("correo"); // Retorna el correo encontrado
+            }
+
+            return null; // Retorna null si no se encontró ninguna coincidencia
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null; // Si ocurre algún error, se retorna null
+        }
+    }
+
+    // Método para obtener el correo electrónico de un usuario por su identificacion_usuario
+    public String obtenerCorreoUsuario(String identificacionUsuario) {
+        String sql = "SELECT correo FROM Usuarios WHERE identificacion_usuario = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, identificacionUsuario);
+
+            // Ejecutar la consulta
+            ResultSet rs = pstmt.executeQuery();
+
+            // Verificar si se encontró el usuario con esa identificación
+            if (rs.next()) {
+                return rs.getString("correo"); // Retorna el correo encontrado
+            }
+
+            return null; // Retorna null si no se encontró ninguna coincidencia
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null; // Si ocurre algún error, se retorna null
+        }
+    }
+
+    // Método para cambiar el PIN de un usuario
+    public boolean cambiarPinUsuario(String identificacionUsuario, int codigoCambio, String nuevoPin) {
+        // Verificar si la identificación y el código de cambio coinciden
+        String verificarSql = "SELECT COUNT(*) FROM Usuarios WHERE identificacion_usuario = ? AND codigo_cambio = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmtVerificar = conn.prepareStatement(verificarSql)) {
+
+            pstmtVerificar.setString(1, identificacionUsuario);
+            pstmtVerificar.setInt(2, codigoCambio);
+
+            // Ejecutar la consulta
+            var rs = pstmtVerificar.executeQuery();
+
+            if (rs.next() && rs.getInt(1) > 0) {
+                // Si coincide, actualizar el PIN
+                String updateSql = "UPDATE Usuarios SET pin = ? WHERE identificacion_usuario = ?";
+                try (PreparedStatement pstmtUpdate = conn.prepareStatement(updateSql)) {
+                    pstmtUpdate.setString(1, nuevoPin);
+                    pstmtUpdate.setString(2, identificacionUsuario);
+                    int rowsAffected = pstmtUpdate.executeUpdate(); // Ejecuta la actualización
+                    return rowsAffected > 0; // Retorna true si se actualizó al menos un registro
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false; // Retorna false si no se encontró coincidencia o si ocurrió un error
+    }
+
+
+    // Método para cambiar el PIN de un administrador
+    public boolean cambiarPinAdministrador(String identificacionAdmin, int codigoCambio, String nuevoPin) {
+        // Verificar si la identificación y el código de cambio coinciden
+        String verificarSql = "SELECT COUNT(*) FROM Administradores WHERE identificacion_usuario = ? AND codigo_cambio = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmtVerificar = conn.prepareStatement(verificarSql)) {
+
+            pstmtVerificar.setString(1, identificacionAdmin);
+            pstmtVerificar.setInt(2, codigoCambio);
+
+            // Ejecutar la consulta
+            var rs = pstmtVerificar.executeQuery();
+
+            if (rs.next() && rs.getInt(1) > 0) {
+                // Si coincide, actualizar el PIN
+                String updateSql = "UPDATE Administradores SET pin = ? WHERE identificacion_usuario = ?";
+                try (PreparedStatement pstmtUpdate = conn.prepareStatement(updateSql)) {
+                    pstmtUpdate.setString(1, nuevoPin);
+                    pstmtUpdate.setString(2, identificacionAdmin);
+                    int rowsAffected = pstmtUpdate.executeUpdate(); // Ejecuta la actualización
+                    return rowsAffected > 0; // Retorna true si se actualizó al menos un registro
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false; // Retorna false si no se encontró coincidencia o si ocurrió un error
+    }
+
+
+
+
 
 }
