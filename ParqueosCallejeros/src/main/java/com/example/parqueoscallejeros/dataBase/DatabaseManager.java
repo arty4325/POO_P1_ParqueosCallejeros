@@ -366,7 +366,6 @@ public class DatabaseManager {
         return false; // Retorna false si no se encontró coincidencia o si ocurrió un error
     }
 
-
     // Método para cambiar el PIN de un administrador
     public boolean cambiarPinAdministrador(String identificacionAdmin, int codigoCambio, String nuevoPin) {
         // Verificar si la identificación y el código de cambio coinciden
@@ -396,6 +395,42 @@ public class DatabaseManager {
         }
         return false; // Retorna false si no se encontró coincidencia o si ocurrió un error
     }
+
+    // Método para resetear el codigo_cambio de un usuario
+    public boolean resetearCodigoCambioUsuario(String identificacionUsuario) {
+        // Actualizar el codigo_cambio a 0
+        String updateSql = "UPDATE Usuarios SET codigo_cambio = 0 WHERE identificacion_usuario = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmtUpdate = conn.prepareStatement(updateSql)) {
+
+            pstmtUpdate.setString(1, identificacionUsuario);
+            int rowsAffected = pstmtUpdate.executeUpdate(); // Ejecuta la actualización
+            return rowsAffected > 0; // Retorna true si se actualizó al menos un registro
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false; // Retorna false si ocurrió un error
+    }
+
+    // Método para resetear el codigo_cambio de un administrador
+    public boolean resetearCodigoCambioAdministrador(String identificacionAdmin) {
+        // Actualizar el codigo_cambio a 0
+        String updateSql = "UPDATE Administradores SET codigo_cambio = 0 WHERE identificacion_usuario = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmtUpdate = conn.prepareStatement(updateSql)) {
+
+            pstmtUpdate.setString(1, identificacionAdmin);
+            int rowsAffected = pstmtUpdate.executeUpdate(); // Ejecuta la actualización
+            return rowsAffected > 0; // Retorna true si se actualizó al menos un registro
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false; // Retorna false si ocurrió un error
+    }
+
+
 
 
 

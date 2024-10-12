@@ -298,7 +298,7 @@ public class RegisterAndLogin {
 
         // Llamar al método para cambiar el PIN
         boolean pinCambiado = databaseManager.cambiarPinUsuario(identificacion, codigoCambio, nuevoPin);
-
+        databaseManager.resetearCodigoCambioUsuario(identificacion);
         if (pinCambiado) {
             System.out.println("El PIN ha sido cambiado exitosamente.");
         } else {

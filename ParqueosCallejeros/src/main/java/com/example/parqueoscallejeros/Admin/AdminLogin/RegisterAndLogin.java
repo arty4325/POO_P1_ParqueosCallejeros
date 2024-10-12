@@ -14,6 +14,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+import javax.mail.MessagingException;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Random;
@@ -51,6 +52,14 @@ public class RegisterAndLogin {
     private TextField sendAdminPassword;
     @FXML
     private Label verificationLabel;
+    @FXML
+    private TextField usuarioCambio;
+    @FXML
+    private TextField cambioIdentificacion;
+    @FXML
+    private TextField cambioCodigo;
+    @FXML
+    private TextField cambioPin;
 
 
     public void switchToMain(ActionEvent event) throws IOException { // REGISTRO
@@ -71,6 +80,22 @@ public class RegisterAndLogin {
 
     public void switchToVerify(ActionEvent event) throws IOException { // REGISTRO
         Parent root = FXMLLoader.load(getClass().getResource("/com/example/parqueoscallejeros/Admin/AdminLogin/Scene3.fxml"));
+        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    public void switchToScene5(ActionEvent event) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("/com/example/parqueoscallejeros/Admin/AdminLogin/Scene5.fxml"));
+        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    public void switchToScene6(ActionEvent event) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("/com/example/parqueoscallejeros/Admin/AdminLogin/Scene6.fxml"));
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setScene(scene);
@@ -196,6 +221,65 @@ public class RegisterAndLogin {
         // Si pasa todas las validaciones
         signLabel.setText("");
         return true;
+    }
+
+
+    public void handleChangeData(ActionEvent event) throws IOException, MessagingException {
+        Random random = new Random();
+        int validacion = random.nextInt(900) + 100;
+
+        DatabaseManager databaseManager = new DatabaseManager();
+        databaseManager.actualizarCodigoCambioAdministrador(usuarioCambio.getText(), validacion);
+        String validacionString;
+        validacionString = Integer.toString(validacion);
+
+        String correo = databaseManager.obtenerCorreoAdministrador(usuarioCambio.getText());
+        String message =
+                "<p>Bienvenido a la aplicación de correos callejeros, " + usuarioCambio.getText() + ",</p>" +
+                        "<p>Usted solicito un codigo para poder cambiar su contraseña en su usuario de ADMINISTRADOR.</p>" +
+                        "<p>El código de cambio suyo es: <strong>" + validacionString + "</strong></p>" +
+                        "<p>Muchas gracias por confiar en nosotros.</p>" +
+                        "<p>Atentamente,<br>Parqueos Callejeros S.A</p>";
+
+        EnvioCorreos envioCorreos = new EnvioCorreos();
+        envioCorreos.createEmail(correo, "Cambio de Contraseña " + usuarioCambio.getText(), message);
+        envioCorreos.sendEmail();
+
+
+        Parent root = FXMLLoader.load(getClass().getResource("/com/example/parqueoscallejeros/User/UserLogin/Scene6.fxml"));
+        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+
+    }
+
+    public void handleSetNewPin(ActionEvent event) throws IOException {
+        DatabaseManager databaseManager = new DatabaseManager();
+
+        String identificacion = cambioIdentificacion.getText();
+        String codigoTexto = cambioCodigo.getText();
+        String nuevoPin = cambioPin.getText();
+        // Verificar que el código de cambio contenga solo números
+        if (!codigoTexto.matches("\\d+")) {
+            // Mostrar un mensaje de error si el código no es válido
+            System.out.println("El código de cambio debe contener solo números.");
+            // Aquí puedes usar un dialogo de alerta o una etiqueta en la interfaz para mostrar el mensaje
+            return; // Salir del método si la verificación falla
+        }
+
+        // Convertir el código de cambio a int
+        int codigoCambio = Integer.parseInt(codigoTexto);
+
+        // Llamar al método para cambiar el PIN
+        boolean pinCambiado = databaseManager.cambiarPinAdministrador(identificacion, codigoCambio, nuevoPin);
+        databaseManager.resetearCodigoCambioAdministrador(identificacion);
+        if (pinCambiado) {
+            System.out.println("El PIN ha sido cambiado exitosamente.");
+        } else {
+            System.out.println("Error al cambiar el PIN. Verifica los datos proporcionados.");
+        }
+
     }
 
 
