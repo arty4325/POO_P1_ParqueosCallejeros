@@ -1,5 +1,7 @@
 package com.example.parqueoscallejeros.Admin.AdminMain;
 
+import com.example.parqueoscallejeros.dataBase.DatabaseManager;
+import com.sun.tools.jconsole.JConsoleContext;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -12,7 +14,12 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+import java.sql.Time;
+import java.time.LocalDate;
+
 import java.io.IOException;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 public class ConfigParqueo {
     private int uniqueId;
@@ -90,10 +97,46 @@ public class ConfigParqueo {
 
 
     public void handleInformation(ActionEvent event) throws IOException { // REGISTRO
-        validacionDatos();
+        if(validacionDatos()){
+            DatabaseManager databaseManager = new DatabaseManager();
+            int inicioEspacio = Integer.parseInt(espaciosInicio.getText());
+            int finEspacio = Integer.parseInt(espaciosFin.getText());
+            Integer startH = startHour.getValue();
+            Integer startM = startMinute.getValue();
+            Integer endH = endHour.getValue();
+            Integer endM = endMinute.getValue();
+
+            // Crear LocalTime para el inicio y fin
+            LocalTime startTime = LocalTime.of(startH, startM);
+            LocalTime endTime = LocalTime.of(endH, endM);
+
+            // Formatear las horas y minutos a String en formato HH:mm
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+            String startTimeString = startTime.format(formatter); // "HH:mm"
+            String endTimeString = endTime.format(formatter);     // "HH:mm"
+
+
+
+            boolean flag = true;
+          for(int i = inicioEspacio; i <= finEspacio; i++){
+              //System.out.println(databaseManager.verificarConfiguracionParqueoExistente(i));
+              if(databaseManager.verificarConfiguracionParqueoExistente(i)){
+                  flag = false;
+              }
+          }
+          if(flag){
+              for(int i = inicioEspacio; i <= finEspacio; i++){
+                  databaseManager.insertarConfiguracionParqueo(i, startTimeString, endTimeString, Integer.parseInt(precioHora.getText()),
+                          Integer.parseInt(minCompra.getText()),
+                          Integer.parseInt(costoMulta.getText())
+                          );
+              }
+          }
+          System.out.println(flag);
+        }
     }
 
-    private void validacionDatos() {
+    private boolean validacionDatos() {
         boolean isValid = true;
 
         // Validación de horario de regulación
@@ -170,5 +213,6 @@ public class ConfigParqueo {
             statusLabel.setText("Todos los datos son válidos.");
             // Aquí puedes agregar la lógica para continuar, como guardar los datos
         }
+        return isValid;
     }
 }

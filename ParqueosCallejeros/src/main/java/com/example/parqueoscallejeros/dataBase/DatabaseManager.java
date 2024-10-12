@@ -430,6 +430,56 @@ public class DatabaseManager {
         return false; // Retorna false si ocurrió un error
     }
 
+    public boolean insertarConfiguracionParqueo(int id, String horarioInicio, String horarioFin, int precioPorHora,
+                                                int tiempoMinimo, int costoMulta) {
+        // Primero, verificamos si el ID ya existe
+        if (verificarConfiguracionParqueoExistente(id)) {
+            return false; // El ID ya existe, no se realiza la inserción
+        }
+
+        String sql = "INSERT INTO ConfiguracionParqueo (id, horario_inicio, horario_fin, precio_por_hora, tiempo_minimo, costo_multa) " +
+                "VALUES (?, ?, ?, ?, ?, ?)";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            pstmt.setString(2, horarioInicio); // Inserta horario_inicio como String
+            pstmt.setString(3, horarioFin);    // Inserta horario_fin como String
+            pstmt.setInt(4, precioPorHora);
+            pstmt.setInt(5, tiempoMinimo);
+            pstmt.setInt(6, costoMulta);
+            pstmt.executeUpdate(); // Ejecuta la inserción
+            return true; // Inserción fue exitosa
+        } catch (SQLException e) {
+            e.printStackTrace(); // Puedes registrar el error para más detalles
+            return false; // Si algo falla, la inserción no fue exitosa
+        }
+    }
+
+
+    public boolean verificarConfiguracionParqueoExistente(int id) {
+        String sql = "SELECT COUNT(*) FROM ConfiguracionParqueo WHERE id = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+
+            // Ejecutar la consulta
+            var rs = pstmt.executeQuery();
+
+            // Verificar si se encontró un registro con ese ID
+            if (rs.next()) {
+                int count = rs.getInt(1); // Obtiene el conteo de registros
+                return count > 0; // Retorna true si hay al menos un registro, de lo contrario false
+            }
+
+            return false; // No se encontró ningún registro
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false; // Si ocurre algún error, se retorna false
+        }
+    }
+
 
 
 
