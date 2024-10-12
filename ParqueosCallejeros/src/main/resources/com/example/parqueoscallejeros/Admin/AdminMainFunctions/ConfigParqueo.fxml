@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.parqueoscallejeros.Admin.AdminMain.ConfigParqueo">
+   <children>
+      <ComboBox fx:id="startHour" layoutX="128.0" layoutY="135.0" prefWidth="150.0" />
+      <ComboBox fx:id="startMinute" layoutX="129.0" layoutY="173.0" prefWidth="150.0" />
+      <ComboBox fx:id="endHour" layoutX="414.0" layoutY="173.0" prefWidth="150.0" />
+      <ComboBox fx:id="endMinute" layoutX="412.0" layoutY="216.0" prefWidth="150.0" />
+      <Text layoutX="33.0" layoutY="152.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Hora Inicio" />
+      <Text layoutX="24.0" layoutY="190.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Minutos Inicio" />
+      <Text layoutX="324.0" layoutY="233.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Minutos Fin" />
+      <Text layoutX="323.0" layoutY="190.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Hora Fin" />
+      <Text layoutX="72.0" layoutY="66.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Administrar Parqueos">
+         <font>
+            <Font size="48.0" />
+         </font>
+      </Text>
+      <TextField fx:id="precioHora" layoutX="128.0" layoutY="216.0" />
+      <Text layoutX="36.0" layoutY="233.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Precio Hora" />
+      <TextField fx:id="minCompra" layoutX="414.0" layoutY="253.0" />
+      <Text layoutX="313.0" layoutY="270.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Min Compra" />
+      <TextField fx:id="costoMulta" layoutX="129.0" layoutY="253.0" />
+      <Text layoutX="35.0" layoutY="270.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Costo Multa" />
+      <TextField fx:id="espaciosInicio" layoutX="239.0" layoutY="291.0" />
+      <TextField fx:id="espaciosFin" layoutX="238.0" layoutY="332.0" />
+      <Text layoutX="132.0" layoutY="308.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Espacios Inicio" />
+      <Text layoutX="139.0" layoutY="349.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Espacios Fin" />
+      <Button layoutX="432.0" layoutY="291.0" mnemonicParsing="false" onAction="#handleInformation" text="Agregar Parqueos" />
+      <Button layoutX="436.0" layoutY="332.0" mnemonicParsing="false" text="Borrar Parqueos" />
+      <Label fx:id="statusLabel" layoutX="138.0" layoutY="89.0" prefHeight="17.0" prefWidth="324.0" />
+   </children>
+</AnchorPane>
