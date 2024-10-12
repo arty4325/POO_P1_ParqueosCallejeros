@@ -30,5 +30,6 @@
       <Text layoutX="195.0" layoutY="305.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Pin" />
       <Button layoutX="471.0" layoutY="361.0" mnemonicParsing="false" onAction="#sendSignIn" text="Enviar Informacion" />
       <Label fx:id="signLabel" layoutX="272.0" layoutY="38.0" prefHeight="17.0" prefWidth="222.0" />
+      <Button layoutX="529.0" layoutY="327.0" mnemonicParsing="false" onAction="#switchToMain" text="Volver" />
    </children>
 </AnchorPane>

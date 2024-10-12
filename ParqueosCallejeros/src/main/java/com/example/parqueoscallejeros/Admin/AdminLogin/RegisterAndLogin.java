@@ -1,5 +1,6 @@
 package com.example.parqueoscallejeros.Admin.AdminLogin;
 
+import com.example.parqueoscallejeros.Admin.AdminMain.MainController;
 import com.example.parqueoscallejeros.EnvioCorreos;
 import com.example.parqueoscallejeros.dataBase.DatabaseManager;
 import javafx.event.ActionEvent;
@@ -45,11 +46,23 @@ public class RegisterAndLogin {
     @FXML
     private TextField idAdminCodVal;
     @FXML
+    private TextField sendAdminUser;
+    @FXML
+    private TextField sendAdminPassword;
+    @FXML
     private Label verificationLabel;
 
 
+    public void switchToMain(ActionEvent event) throws IOException { // REGISTRO
+        Parent root = FXMLLoader.load(getClass().getResource("/com/example/parqueoscallejeros/Admin/AdminLogin/Scene1.fxml"));
+        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
+
     public void switchToSignIn(ActionEvent event) throws IOException { // REGISTRO
-        Parent root = FXMLLoader.load(getClass().getResource("/com/example/parqueoscallejeros/Admin/AdminLogin/Scene2.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("/com/example/parqueoscallejeros/Admin/AdminLogin/Scene4.fxml"));
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setScene(scene);
@@ -91,6 +104,7 @@ public class RegisterAndLogin {
                 envioCorreos.sendEmail();
                 signLabel.setText("Usuario Registrado");
                 // Me voy a otra ventana en donde verifico que todo este bien
+
             } catch (Exception e) {
                 // Captura cualquier excepción que ocurra durante la inserción en la base de datos
                 //infoLabel.setText("No se pudo subir la información a la base de datos.");
@@ -108,6 +122,31 @@ public class RegisterAndLogin {
             verificationLabel.setText("Se ha registrado el administrador");
         } else {
             verificationLabel.setText("No se ha verificado el administrador");
+        }
+    }
+
+    public void handleSignIn(ActionEvent event) throws IOException {
+        DatabaseManager databaseManager = new DatabaseManager();
+        if(databaseManager.iniciarSesionAdmin(sendAdminUser.getText(), sendAdminPassword.getText())){
+            int id = databaseManager.obtenerIdAdmin(sendAdminUser.getText(), sendAdminPassword.getText());
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/parqueoscallejeros/Admin/AdminMainFunctions/AdminMain.fxml"));
+            Parent root = loader.load();
+
+            // Obtén el controlador del nuevo FXML
+            MainController controller = loader.getController();
+
+            // Pasa el valor (por ejemplo, el idUsuario)
+            controller.setUserData(id, sendAdminUser.getText(), sendAdminPassword.getText());
+
+            // Cambia la escena
+            stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+            scene = new Scene(root);
+            stage.setScene(scene);
+            stage.show();
+        } else {
+            System.out.println("No se ha logrado hacer el inicio de sesion");
+
         }
     }
 
@@ -158,6 +197,7 @@ public class RegisterAndLogin {
         signLabel.setText("");
         return true;
     }
+
 
 
 }
