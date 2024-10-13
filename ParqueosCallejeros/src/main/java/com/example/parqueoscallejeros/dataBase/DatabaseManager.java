@@ -1,6 +1,7 @@
 package com.example.parqueoscallejeros.dataBase;
 // cambio
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -595,8 +596,115 @@ public class DatabaseManager {
         return false; // Retorna false si no se encuentra el espacio o si tiene estado 1
     }
 
+    public String obtenerHorarioInicio(int idConfiguracion) {
+        String sql = "SELECT horario_inicio FROM ConfiguracionParqueo WHERE id = ?";
+        String horarioInicio = null;
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, idConfiguracion);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    horarioInicio = rs.getString("horario_inicio"); // Obtener el horario de inicio como String
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Puedes registrar el error para más detalles
+        }
+
+        return horarioInicio; // Retorna el horario de inicio como String
+    }
+
+    public String obtenerHorarioFin(int idConfiguracion) {
+        String sql = "SELECT horario_fin FROM ConfiguracionParqueo WHERE id = ?";
+        String horarioFin = null;
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, idConfiguracion);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    horarioFin = rs.getString("horario_fin"); // Obtener el horario de fin como String
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Puedes registrar el error para más detalles
+        }
+
+        return horarioFin; // Retorna el horario de fin como String
+    }
 
 
+
+    public int obtenerPrecioPorHora(int idConfiguracion) {
+        String sql = "SELECT precio_por_hora FROM ConfiguracionParqueo WHERE id = ?";
+        int precioPorHora = 0;
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, idConfiguracion);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    precioPorHora = rs.getInt("precio_por_hora"); // Obtener el precio por hora
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Puedes registrar el error para más detalles
+        }
+
+        return precioPorHora; // Retorna el precio por hora
+    }
+
+
+
+    public int obtenerTiempoMinimo(int idConfiguracion) {
+        String sql = "SELECT tiempo_minimo FROM ConfiguracionParqueo WHERE id = ?";
+        int tiempoMinimo = 0;
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, idConfiguracion);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    tiempoMinimo = rs.getInt("tiempo_minimo"); // Obtener el tiempo mínimo
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Puedes registrar el error para más detalles
+        }
+
+        return tiempoMinimo; // Retorna el tiempo mínimo
+    }
+
+
+    public int obtenerCostoMulta(int idConfiguracion) {
+        String sql = "SELECT costo_multa FROM ConfiguracionParqueo WHERE id = ?";
+        int costoMulta = 0;
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, idConfiguracion);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    costoMulta = rs.getInt("costo_multa"); // Obtener el costo de multa
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Puedes registrar el error para más detalles
+        }
+
+        return costoMulta; // Retorna el costo de multa
+    }
 
 
 
