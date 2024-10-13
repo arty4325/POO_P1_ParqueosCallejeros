@@ -18,4 +18,5 @@
       <Button layoutX="338.0" layoutY="254.0" mnemonicParsing="false" onAction="#handleChangeData" text="Send Usuario" />
       <Button layoutX="272.0" layoutY="293.0" mnemonicParsing="false" onAction="#switchToScene6" text="Ir a ventana de verificacion" />
    </children>
+
 </AnchorPane>

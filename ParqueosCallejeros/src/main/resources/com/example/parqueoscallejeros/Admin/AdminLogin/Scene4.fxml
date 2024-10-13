@@ -20,4 +20,5 @@
       <Button layoutX="374.0" layoutY="245.0" mnemonicParsing="false" onAction="#handleSignIn" text="Iniciar Sesion" />
       <Button layoutX="522.0" layoutY="351.0" mnemonicParsing="false" onAction="#switchToMain" text="Volver" />
    </children>
+
 </AnchorPane>

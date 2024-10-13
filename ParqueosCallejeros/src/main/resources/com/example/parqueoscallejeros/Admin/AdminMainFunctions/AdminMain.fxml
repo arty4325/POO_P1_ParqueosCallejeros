@@ -14,4 +14,5 @@
       </Text>
       <Button layoutX="42.0" layoutY="112.0" mnemonicParsing="false" onAction="#switchToMain" text="Config Parqueo" />
    </children>
+
 </AnchorPane>

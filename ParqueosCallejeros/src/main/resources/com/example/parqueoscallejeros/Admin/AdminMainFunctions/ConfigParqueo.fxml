@@ -37,4 +37,5 @@
       <Button layoutX="436.0" layoutY="332.0" mnemonicParsing="false" onAction="#handleDeleteData" text="Borrar Parqueos" />
       <Label fx:id="statusLabel" layoutX="138.0" layoutY="89.0" prefHeight="17.0" prefWidth="324.0" />
    </children>
+
 </AnchorPane>

@@ -24,4 +24,5 @@
       <Label fx:id="verificationLabel" layoutX="174.0" layoutY="92.0" prefHeight="18.0" prefWidth="252.0" />
       <Button layoutX="520.0" layoutY="345.0" mnemonicParsing="false" onAction="#switchToMain" text="Volver" />
    </children>
+
 </AnchorPane>

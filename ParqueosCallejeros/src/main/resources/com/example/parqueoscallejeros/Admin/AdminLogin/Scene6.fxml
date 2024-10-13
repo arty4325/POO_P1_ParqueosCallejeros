@@ -21,4 +21,5 @@
       <Text layoutX="196.0" layoutY="253.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Nuevo Pin" />
       <Button layoutX="449.0" layoutY="316.0" mnemonicParsing="false" onAction="#handleSetNewPin" text="Enviar Datos" />
    </children>
+
 </AnchorPane>

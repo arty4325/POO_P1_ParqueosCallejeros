@@ -17,4 +17,5 @@
       <Button layoutX="447.0" layoutY="311.0" mnemonicParsing="false" onAction="#switchToScene3" text="Verificar Usuario" />
       <Button layoutX="427.0" layoutY="273.0" mnemonicParsing="false" onAction="#switchToScene5" text="Cambiar Contrasena" />
    </children>
+
 </AnchorPane>

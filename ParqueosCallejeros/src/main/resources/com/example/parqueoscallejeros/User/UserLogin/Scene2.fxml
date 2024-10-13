@@ -41,4 +41,5 @@
       </Label>
       <Button fx:id="volver" layoutX="534.0" layoutY="315.0" mnemonicParsing="false" onAction="#switchToScene1" text="Volver" />
    </children>
+
 </AnchorPane>

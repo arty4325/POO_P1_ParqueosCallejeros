@@ -21,4 +21,5 @@
       <Text layoutX="75.0" layoutY="256.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Modelo (Opcional)" />
       <Button layoutX="231.0" layoutY="297.0" mnemonicParsing="false" onAction="#registrarCarros" text="Enviar Informacion" />
    </children>
+
 </AnchorPane>
