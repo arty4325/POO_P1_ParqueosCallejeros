@@ -1,5 +1,6 @@
 package com.example.parqueoscallejeros.User.UserMain;
 
+import com.example.parqueoscallejeros.EnvioCorreos;
 import com.example.parqueoscallejeros.dataBase.DatabaseManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -13,6 +14,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+import javax.mail.MessagingException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.sql.Time;
@@ -117,7 +119,7 @@ public class ParquearController {
 
     }
 
-    public void sendData(ActionEvent event) throws IOException {
+    public void sendData(ActionEvent event) throws IOException, MessagingException {
         // REGISTRO
         int numero = Integer.parseInt(espacioParqueo.getText());
         DatabaseManager databaseManager = new DatabaseManager();
@@ -175,6 +177,22 @@ public class ParquearController {
         databaseManager.actualizarEstadoEspacioParqueado(espacioParqueoInt);
         databaseManager.insertarHistorialUso(uniqueId, espacioParqueoInt, precioFinal, 0, fechaFormateada);
         databaseManager.actualizarEstadoVehiculoParqueado(uniqueId, placaSeleccionada);
+
+        String correoUsuario = databaseManager.obtenerCorreoUsuario(userId);
+
+        String message =
+                "<p>La aplicacion de correos callejeros le envia saludos, " + userId + ",</p>" +
+                        "<p>Este correo incluye la informacion del carro que suted acaba de aparcar.</p>" +
+                        "<p>El espacio donde usted acaba de parquear es: <strong>" + espacioParqueoTexto + "</strong></p>" +
+                        "<p>La placa del vehiculo que usted acaba de parquear es: <strong>" + placasAccordion.getSelectionModel().getSelectedItem() + "</strong></p>" +
+                        "<p>El tiempo de parqueo ingresado es: <strong>" + tiempoMinimoIngresado.getText() + "</strong></p>" +
+                        "<p>EL precio final de este tiempo es: <strong>" + precioFinal + "</strong></p>" +
+                        "<p>Muchas gracias por confiar en nosotros.</p>" +
+                        "<p>Atentamente,<br>Parqueos Callejeros S.A</p>";
+
+        EnvioCorreos envioCorreos = new EnvioCorreos();
+        envioCorreos.createEmail(correoUsuario, "Informacion Carro Parqueado", message);
+        envioCorreos.sendEmail();
 
     }
 
