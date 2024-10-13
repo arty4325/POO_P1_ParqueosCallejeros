@@ -24,4 +24,5 @@
       <Label fx:id="verifyLabel" layoutX="147.0" layoutY="84.0" prefHeight="17.0" prefWidth="307.0" />
       <Button layoutX="458.0" layoutY="361.0" mnemonicParsing="false" onAction="#switchToScene1" text="Regresar Ventana Principal" />
    </children>
+
 </AnchorPane>
