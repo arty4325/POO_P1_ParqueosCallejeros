@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 
 import java.util.List;
@@ -21,7 +22,8 @@ public class ParquearController {
     @FXML
     private ComboBox<String> placasAccordion; // Cambiar el tipo a String si las placas son cadenas
 
-    
+    @FXML
+    private TextArea espaciosDisponibles;
 
     public void setUserData(int id, String userId, String userPin) {
         System.out.println("PARQUEAR CONTROLLER");
@@ -32,6 +34,7 @@ public class ParquearController {
         this.userId = userId;
         this.userPin = userPin;
         cargarPlacas();
+        cargarEspaciosDisponibles();
     }
 
     // Método para cargar placas en el ComboBox
@@ -45,10 +48,28 @@ public class ParquearController {
         }
     }
 
+    private void cargarEspaciosDisponibles() {
+        List<Integer> listaEspacios = obtenerEspaciosDisponibles();
+        espaciosDisponibles.clear();
+        String label = "";
+
+        for(Integer espacio: listaEspacios) {
+            String espacioString = Integer.toString(espacio);
+            label += espacioString + "\n";
+            //espaciosDisponibles.setText(espacioString);
+        }
+        espaciosDisponibles.setText(label);
+    }
+
     // Método que simula la obtención de placas por usuario (debe ser implementado)
     private List<String> obtenerPlacasPorUsuario(int idUsuario) {
         System.out.println("hola" + idUsuario);
         DatabaseManager databaseManager = new DatabaseManager();
         return databaseManager.obtenerPlacasPorUsuario(idUsuario);// Reemplaza esto con la lógica de tu base de datos
+    }
+
+    private List<Integer> obtenerEspaciosDisponibles() {
+        DatabaseManager databaseManager = new DatabaseManager();
+        return databaseManager.obtenerEspaciosDisponibles();
     }
 }

@@ -555,6 +555,50 @@ public class DatabaseManager {
         return placas; // Retorna la lista de placas
     }
 
+    public List<Integer> obtenerEspaciosDisponibles() {
+        List<Integer> espaciosDisponibles = new ArrayList<>();
+        String sql = "SELECT numero_espacio FROM EspaciosParqueo WHERE estado = 0";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                int numeroEspacio = rs.getInt("numero_espacio"); // Obtener el número de espacio
+                espaciosDisponibles.add(numeroEspacio); // Agregar a la lista
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Puedes registrar el error para más detalles
+        }
+
+        return espaciosDisponibles; // Retorna la lista de espacios disponibles
+    }
+
+    public boolean estaEspacioDisponible(int numeroEspacio) {
+        String sql = "SELECT estado FROM EspaciosParqueo WHERE numero_espacio = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, numeroEspacio);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    int estado = rs.getInt("estado"); // Obtener el estado del espacio
+                    return estado == 0; // Retorna true si está en estado 0, false si está en 1
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Puedes registrar el error para más detalles
+        }
+
+        return false; // Retorna false si no se encuentra el espacio o si tiene estado 1
+    }
+
+
+
+
+
 
 
 
