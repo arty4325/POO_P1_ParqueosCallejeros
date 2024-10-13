@@ -116,6 +116,22 @@ public class Desaparcar {
             databaseManager.actualizarTiempoOcupado(uniqueId, (int) tiempoSobrante);
             databaseManager.eliminarReservaPorEspacio(idParqueo);
             //databaseManager.actualizarAcumuladosPorUsuario(uniqueId, (int) tiempoSobrante); // Imprimir false
+            String correoUsuario = databaseManager.obtenerCorreoUsuario(userId);
+
+            String message =
+                    "<p>La aplicacion de correos callejeros le envia saludos, " + userId + ",</p>" +
+                            "<p>Este correo incluye la informacion del carro que suted acaba de desaparcar.</p>" +
+                            "<p>El espacio donde usted acaba de desaparcar es: <strong>" + idParqueoString + "</strong></p>" +
+                            "<p>La placa del vehiculo que usted acaba de parquear es: <strong>" + placaSeleccionada + "</strong></p>" +
+                            "<p>El tiempo que usted estuvo aparcado fue: <strong>" + minutosDiferenciaString + "</strong></p>" +
+                            "<p>Muchas gracias por confiar en nosotros.</p>" +
+                            "<p>Atentamente,<br>Parqueos Callejeros S.A</p>";
+
+            EnvioCorreos envioCorreos = new EnvioCorreos();
+            envioCorreos.createEmail(correoUsuario, "Informacion Carro Desaparcado", message);
+            envioCorreos.sendEmail();
         }
     }
+
+
 }

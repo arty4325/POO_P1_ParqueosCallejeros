@@ -1006,6 +1006,37 @@ public class DatabaseManager {
         }
     }
 
+    public void aumentarTiempoYCostoPorPlaca(String placa, int tiempoAumentar, int costoAumentar) {
+        // SQL para actualizar el tiempo_reservado y el costo
+        String sql = "UPDATE Reservas SET tiempo_reservado = tiempo_reservado + ?, costo = costo + ? " +
+                "WHERE placa = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // Establecer los parámetros para aumentar el tiempo y el costo
+            pstmt.setInt(1, tiempoAumentar);
+            pstmt.setInt(2, costoAumentar);
+            pstmt.setString(3, placa);
+
+            // Imprimir la consulta para depuración
+            System.out.println("Ejecutando la actualización para la placa: " + placa);
+            System.out.println("Tiempo a aumentar: " + tiempoAumentar + ", Costo a aumentar: " + costoAumentar);
+
+            // Ejecutar la actualización
+            int rowsAffected = pstmt.executeUpdate();
+
+            // Verificar si la actualización fue exitosa
+            if (rowsAffected > 0) {
+                System.out.println("El tiempo y el costo han sido aumentados correctamente para la placa: " + placa);
+            } else {
+                System.out.println("No se encontró ninguna reserva para la placa: " + placa);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Manejar el error
+        }
+    }
+
 
 
 
