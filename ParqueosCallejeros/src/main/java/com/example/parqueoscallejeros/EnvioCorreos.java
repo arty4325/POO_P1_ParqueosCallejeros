@@ -13,7 +13,7 @@ import java.util.Properties;
 public class EnvioCorreos {
 
     private static String emailFrom = "parqueoscallejeros@gmail.com";
-    private static String passwordFrom = "njvwhnohfgogersi";
+    private static String passwordFrom = "gpfvvxhpztdoldno";
     private String emailTo;
     private String subject;
     private String content;
