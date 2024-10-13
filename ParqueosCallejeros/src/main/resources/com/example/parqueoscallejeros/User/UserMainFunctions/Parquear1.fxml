@@ -22,6 +22,12 @@
       <Text layoutX="205.0" layoutY="104.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Verificar Parqueo" />
       <Button layoutX="497.0" layoutY="87.0" mnemonicParsing="false" onAction="#verificarParqueo" text="Verificar" />
       <Label fx:id="infoEspacio" layoutX="205.0" layoutY="125.0" prefHeight="18.0" prefWidth="356.0" />
-      <Label fx:id="infoGratis" layoutX="201.0" layoutY="153.0" prefHeight="18.0" prefWidth="356.0" />
+      <Label fx:id="tiempoParqueo" layoutX="205.0" layoutY="157.0" prefHeight="18.0" prefWidth="356.0" />
+      <TextField fx:id="tiempoMinimoIngresado" layoutX="320.0" layoutY="278.0" />
+      <Text layoutX="207.0" layoutY="295.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Ingresar Tiempo" />
+      <Label fx:id="tiempoMinimoMessage" layoutX="205.0" layoutY="191.0" prefHeight="18.0" prefWidth="356.0" />
+      <Button layoutX="345.0" layoutY="328.0" mnemonicParsing="false" onAction="#sendData" text="Enviar Data" />
+      <Label fx:id="precioHora" layoutX="205.0" layoutY="224.0" prefHeight="18.0" prefWidth="356.0" />
+      <Label fx:id="infoDataFinal" layoutX="205.0" layoutY="257.0" prefHeight="18.0" prefWidth="356.0" />
    </children>
 </AnchorPane>

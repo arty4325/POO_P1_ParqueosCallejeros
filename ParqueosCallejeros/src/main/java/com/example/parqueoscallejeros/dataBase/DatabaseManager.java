@@ -3,6 +3,7 @@ package com.example.parqueoscallejeros.dataBase;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -535,7 +536,8 @@ public class DatabaseManager {
 
     public List<String> obtenerPlacasPorUsuario(int idUsuario) {
         List<String> placas = new ArrayList<>();
-        String sql = "SELECT placa FROM Vehiculos WHERE id_usuario = ?";
+        // Consulta modificada para verificar que parqueado sea 0
+        String sql = "SELECT placa FROM Vehiculos WHERE id_usuario = ? AND parqueado = 0";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -555,6 +557,7 @@ public class DatabaseManager {
 
         return placas; // Retorna la lista de placas
     }
+
 
     public List<Integer> obtenerEspaciosDisponibles() {
         List<Integer> espaciosDisponibles = new ArrayList<>();
@@ -705,6 +708,98 @@ public class DatabaseManager {
 
         return costoMulta; // Retorna el costo de multa
     }
+
+    public void insertarReserva(int idUsuario, int idEspacio, String placa, int tiempoReservado, int costo, String fechaReserva) {
+        String sql = "INSERT INTO Reservas (id_usuario, id_espacio, placa, tiempo_reservado, costo, fecha_reserva) VALUES (?, ?, ?, ?, ?, ?)";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // Asignar los valores a cada parámetro de la consulta
+            pstmt.setInt(1, idUsuario);
+            pstmt.setInt(2, idEspacio);
+            pstmt.setString(3, placa);
+            pstmt.setInt(4, tiempoReservado);
+            pstmt.setInt(5, costo);
+            pstmt.setString(6, fechaReserva); // Asignar fecha como String
+
+            // Ejecutar la consulta
+            pstmt.executeUpdate();
+            System.out.println("Reserva insertada correctamente.");
+        } catch (SQLException e) {
+            e.printStackTrace(); // Manejar el error
+        }
+    }
+
+    public void insertarHistorialUso(int idUsuario, int idEspacio, int costo, int tiempoOcupado, String fechaUso) {
+        String sql = "INSERT INTO HistorialUso (id_usuario, id_espacio, costo, tiempo_ocupado, fecha_uso) VALUES (?, ?, ?, ?, ?)";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // Asignar los valores a cada parámetro de la consulta
+            pstmt.setInt(1, idUsuario);
+            pstmt.setInt(2, idEspacio);
+            pstmt.setInt(3, costo);
+            pstmt.setInt(4, tiempoOcupado);
+            pstmt.setString(5, fechaUso); // Asignar fecha como String
+
+            // Ejecutar la consulta
+            pstmt.executeUpdate();
+            System.out.println("Historial de uso insertado correctamente.");
+        } catch (SQLException e) {
+            e.printStackTrace(); // Manejar el error
+        }
+    }
+
+
+    public void actualizarEstadoEspacioParqueado(int numeroEspacio) {
+        String sql = "UPDATE EspaciosParqueo SET estado = 1 WHERE numero_espacio = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // Asignar el valor del número de espacio al parámetro de la consulta
+            pstmt.setInt(1, numeroEspacio);
+
+            // Ejecutar la actualización
+            int rowsAffected = pstmt.executeUpdate();
+
+            // Verificar si la actualización fue exitosa
+            if (rowsAffected > 0) {
+                System.out.println("El estado del espacio ha sido actualizado correctamente.");
+            } else {
+                System.out.println("No se encontró ningún espacio con ese número.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Manejar el error
+        }
+    }
+
+    public void actualizarEstadoVehiculoParqueado(int idUsuario, String placa) {
+        String sql = "UPDATE Vehiculos SET parqueado = 1 WHERE placa = ? AND id_usuario = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // Asignar los valores de placa y idUsuario a los parámetros de la consulta
+            pstmt.setString(1, placa);
+            pstmt.setInt(2, idUsuario);
+
+            // Ejecutar la actualización
+            int rowsAffected = pstmt.executeUpdate();
+
+            // Verificar si la actualización fue exitosa
+            if (rowsAffected > 0) {
+                System.out.println("El estado del vehículo ha sido actualizado correctamente.");
+            } else {
+                System.out.println("No se encontró ningún vehículo con esa placa y usuario.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Manejar el error
+        }
+    }
+
 
 
 
