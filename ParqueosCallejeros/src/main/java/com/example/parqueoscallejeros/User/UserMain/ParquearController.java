@@ -159,7 +159,7 @@ public class ParquearController {
 
         // Cálculo del precio final
         Integer precioFinal = (int) ((double) precioHoraVar / 60 * tiempoIngresadoInt);
-        System.out.println(precioFinal);
+        //System.out.println(precioFinal);
         System.out.println(precioHoraVar);
         System.out.println(tiempoIngresadoInt);
         // Obtener la fecha y hora actual del sistema
@@ -175,7 +175,7 @@ public class ParquearController {
 
         databaseManager.insertarReserva(uniqueId, espacioParqueoInt, placaSeleccionada, tiempoIngresadoInt, precioFinal, fechaFormateada);
         databaseManager.actualizarEstadoEspacioParqueado(espacioParqueoInt);
-        databaseManager.insertarHistorialUso(uniqueId, espacioParqueoInt, precioFinal, 0, fechaFormateada);
+        databaseManager.insertarHistorialUso(uniqueId, espacioParqueoInt, 0, 0, fechaFormateada);
         databaseManager.actualizarEstadoVehiculoParqueado(uniqueId, placaSeleccionada);
 
         String correoUsuario = databaseManager.obtenerCorreoUsuario(userId);

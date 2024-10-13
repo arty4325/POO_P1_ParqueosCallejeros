@@ -936,8 +936,8 @@ public class DatabaseManager {
             e.printStackTrace(); // Manejar el error
         }
     }
-    public void actualizarTiempoOcupado(int idUsuario, int nuevoTiempoOcupado) {
-        String sql = "UPDATE HistorialUso SET tiempo_ocupado = ? WHERE id_usuario = ?";
+    public void actualizarTiempoOcupado(int idUsuario, int nuevoTiempoOcupado, String fechaReserva) {
+        String sql = "UPDATE HistorialUso SET tiempo_ocupado = ? WHERE id_usuario = ? AND fecha_uso = ?";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -945,6 +945,7 @@ public class DatabaseManager {
             // Asignar los valores a cada parámetro de la consulta
             pstmt.setInt(1, nuevoTiempoOcupado);
             pstmt.setInt(2, idUsuario);
+            pstmt.setString(3, fechaReserva); // Asegurarse de que el formato de fecha coincide
 
             // Ejecutar la actualización
             int rowsAffected = pstmt.executeUpdate();
@@ -953,12 +954,39 @@ public class DatabaseManager {
             if (rowsAffected > 0) {
                 System.out.println("El tiempo ocupado ha sido actualizado correctamente.");
             } else {
-                System.out.println("No se encontró ningún historial de uso con ese usuario.");
+                System.out.println("No se encontró ningún historial de uso con ese usuario o la fecha no coincide.");
             }
         } catch (SQLException e) {
             e.printStackTrace(); // Manejar el error
         }
     }
+
+    public void actualizarCostoEnTablaCosto(int idUsuario, int nuevoCosto, String fechaReserva) {
+        String sql = "UPDATE HistorialUso SET costo = ? WHERE id_usuario = ? AND fecha_uso = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // Asignar los valores a cada parámetro de la consulta
+            pstmt.setInt(1, nuevoCosto);
+            pstmt.setInt(2, idUsuario);
+            pstmt.setString(3, fechaReserva); // Asegurarse de que el formato de fecha coincide
+
+            // Ejecutar la actualización
+            int rowsAffected = pstmt.executeUpdate();
+
+            // Verificar si la actualización fue exitosa
+            if (rowsAffected > 0) {
+                System.out.println("El costo ha sido actualizado correctamente en la tabla Costo.");
+            } else {
+                System.out.println("No se encontró ningún registro en la tabla Costo con ese usuario o la fecha no coincide.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Manejar el error
+        }
+    }
+
+
     public void eliminarReservaPorEspacio(int idEspacio) {
         String sql = "DELETE FROM Reservas WHERE id_espacio = ?";
 
