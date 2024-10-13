@@ -558,6 +558,31 @@ public class DatabaseManager {
         return placas; // Retorna la lista de placas
     }
 
+    public List<String> obtenerPlacasOcupadasPorUsuario(int idUsuario) {
+        List<String> placas = new ArrayList<>();
+        // Consulta para verificar que parqueado sea 1 (ocupado)
+        String sql = "SELECT placa FROM Vehiculos WHERE id_usuario = ? AND parqueado = 1";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, idUsuario);
+
+            // Ejecutar la consulta
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    String placa = rs.getString("placa"); // Obtener la placa
+                    placas.add(placa); // Agregar a la lista
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Puedes registrar el error para más detalles
+        }
+
+        return placas; // Retorna la lista de placas ocupadas
+    }
+
+
 
     public List<Integer> obtenerEspaciosDisponibles() {
         List<Integer> espaciosDisponibles = new ArrayList<>();
@@ -799,6 +824,196 @@ public class DatabaseManager {
             e.printStackTrace(); // Manejar el error
         }
     }
+
+    public Integer obtenerIdEspacioPorPlaca(String placa) {
+        Integer idEspacio = null; // Inicializar la variable a null para indicar que no se ha encontrado
+
+        // Consulta para obtener el id_espacio basado en la placa
+        String sql = "SELECT id_espacio FROM Reservas WHERE placa = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, placa); // Asignar la placa al parámetro de la consulta
+
+            // Ejecutar la consulta
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    idEspacio = rs.getInt("id_espacio"); // Obtener el id_espacio
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Manejar el error
+        }
+
+        return idEspacio; // Retornar el id_espacio o null si no se encontró
+    }
+
+    public String obtenerFechaReserva(int idReserva) {
+        String sql = "SELECT fecha_reserva FROM Reservas WHERE id_espacio = ?"; // Asegúrate de que la columna se llama correctamente
+        String fechaReserva = null;
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, idReserva); // Establecer el id de reserva como parámetro
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    fechaReserva = rs.getString("fecha_reserva"); // Obtener la fecha de reserva como String
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Manejar el error
+        }
+
+        return fechaReserva; // Retornar la fecha de reserva como String
+    }
+
+    public Integer obtenerTiempoReservado(int idReserva) {
+        String sql = "SELECT tiempo_reservado FROM Reservas WHERE id_espacio = ?"; // Asegúrate de que la columna se llama correctamente
+        Integer tiempoReservado = null; // Usamos Integer para permitir que pueda ser nulo
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, idReserva); // Establecer el id de reserva como parámetro
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    tiempoReservado = rs.getInt("tiempo_reservado"); // Obtener el tiempo reservado como Integer
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Manejar el error
+        }
+
+        return tiempoReservado; // Retornar el tiempo reservado como Integer
+    }
+
+    public void actualizarEstadoVehiculoDesparqueado(String placa) {
+        String sql = "UPDATE Vehiculos SET parqueado = 0 WHERE placa = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // Asignar el valor de la placa al parámetro de la consulta
+            pstmt.setString(1, placa);
+
+            // Ejecutar la actualización
+            int rowsAffected = pstmt.executeUpdate();
+
+            // Verificar si la actualización fue exitosa
+            if (rowsAffected > 0) {
+                System.out.println("El estado del vehículo ha sido actualizado a no parqueado correctamente.");
+            } else {
+                System.out.println("No se encontró ningún vehículo con esa placa.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Manejar el error
+        }
+    }
+
+    public void actualizarEstadoEspacioDesparqueado(int numeroEspacio) {
+        String sql = "UPDATE EspaciosParqueo SET estado = 0 WHERE numero_espacio = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // Asignar el valor del número de espacio al parámetro de la consulta
+            pstmt.setInt(1, numeroEspacio);
+
+            // Ejecutar la actualización
+            int rowsAffected = pstmt.executeUpdate();
+
+            // Verificar si la actualización fue exitosa
+            if (rowsAffected > 0) {
+                System.out.println("El estado del espacio ha sido actualizado a no ocupado correctamente.");
+            } else {
+                System.out.println("No se encontró ningún espacio con ese número.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Manejar el error
+        }
+    }
+    public void actualizarTiempoOcupado(int idUsuario, int nuevoTiempoOcupado) {
+        String sql = "UPDATE HistorialUso SET tiempo_ocupado = ? WHERE id_usuario = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // Asignar los valores a cada parámetro de la consulta
+            pstmt.setInt(1, nuevoTiempoOcupado);
+            pstmt.setInt(2, idUsuario);
+
+            // Ejecutar la actualización
+            int rowsAffected = pstmt.executeUpdate();
+
+            // Verificar si la actualización fue exitosa
+            if (rowsAffected > 0) {
+                System.out.println("El tiempo ocupado ha sido actualizado correctamente.");
+            } else {
+                System.out.println("No se encontró ningún historial de uso con ese usuario.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Manejar el error
+        }
+    }
+    public void eliminarReservaPorEspacio(int idEspacio) {
+        String sql = "DELETE FROM Reservas WHERE id_espacio = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // Asignar el valor de idEspacio al parámetro de la consulta
+            pstmt.setInt(1, idEspacio);
+
+            // Ejecutar la eliminación
+            int rowsAffected = pstmt.executeUpdate();
+
+            // Verificar si la eliminación fue exitosa
+            if (rowsAffected > 0) {
+                System.out.println("La reserva ha sido eliminada correctamente.");
+            } else {
+                System.out.println("No se encontró ninguna reserva con ese id de espacio.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Manejar el error
+        }
+    }
+
+    public void sumarAcumuladosPorUsuario(int idUsuario, int nuevosAcumulados) {
+        String sql = "UPDATE Usuarios SET acumulados = acumulados + ? WHERE id = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // Asignar el nuevo valor de acumulados y el idUsuario a los parámetros de la consulta
+            pstmt.setInt(1, nuevosAcumulados);
+            pstmt.setInt(2, idUsuario);
+
+            // Ejecutar la actualización
+            int rowsAffected = pstmt.executeUpdate();
+
+            // Verificar si la actualización fue exitosa
+            if (rowsAffected > 0) {
+                System.out.println("Los acumulados del usuario han sido actualizados correctamente.");
+            } else {
+                System.out.println("No se encontró ningún usuario con ese id.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Manejar el error
+        }
+    }
+
+
+
+
+
+
+
+
+
 
 
 
