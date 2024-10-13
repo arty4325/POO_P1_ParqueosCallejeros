@@ -12,7 +12,8 @@
             <Font size="48.0" />
          </font>
       </Text>
-      <Button layoutX="14.0" layoutY="78.0" mnemonicParsing="false" onAction="#switchToAgregarParqueos" text="Agregar Vehiculos" />
+      <Button layoutX="14.0" layoutY="100.0" mnemonicParsing="false" onAction="#switchToAgregarParqueos" text="Agregar Vehiculos" />
+      <Button layoutX="14.0" layoutY="143.0" mnemonicParsing="false" onAction="#switchToParquear" text="Parquear" />
    </children>
 
 </AnchorPane>

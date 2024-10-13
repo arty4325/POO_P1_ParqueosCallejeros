@@ -2,6 +2,8 @@ package com.example.parqueoscallejeros.dataBase;
 // cambio
 import java.sql.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatabaseManager {
     // Ahora le doy la ruta a la base de datos
@@ -528,6 +530,29 @@ public class DatabaseManager {
             e.printStackTrace();
             return false; // Si ocurre algún error, se retorna false
         }
+    }
+
+    public List<String> obtenerPlacasPorUsuario(int idUsuario) {
+        List<String> placas = new ArrayList<>();
+        String sql = "SELECT placa FROM Vehiculos WHERE id_usuario = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, idUsuario);
+
+            // Ejecutar la consulta
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    String placa = rs.getString("placa"); // Obtener la placa
+                    placas.add(placa); // Agregar a la lista
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Puedes registrar el error para más detalles
+        }
+
+        return placas; // Retorna la lista de placas
     }
 
 
