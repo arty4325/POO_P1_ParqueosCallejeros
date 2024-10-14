@@ -22,6 +22,7 @@ module com.example.parqueoscallejeros {
     opens com.example.parqueoscallejeros.Admin.AdminLogin to javafx.fxml;
     opens com.example.parqueoscallejeros.Admin.AdminMain to javafx.fxml;
     opens com.example.parqueoscallejeros.Inspectores.InspectoresLogin to javafx.fxml;
+    opens com.example.parqueoscallejeros.Inspectores.InspectoresMain to javafx.fxml;
 
 
 
@@ -31,4 +32,5 @@ module com.example.parqueoscallejeros {
     exports com.example.parqueoscallejeros.Admin.AdminLogin;
     exports com.example.parqueoscallejeros.Admin.AdminMain;
     exports com.example.parqueoscallejeros.Inspectores.InspectoresLogin;
+    exports com.example.parqueoscallejeros.Inspectores.InspectoresMain;
 }

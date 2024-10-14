@@ -96,6 +96,29 @@ public class DatabaseManager {
         }
     }
 
+    public String obtenerCorreoPorPlaca(String placa) {
+        String correo = null; // Inicializar correo como null
+        String sql = "SELECT U.correo FROM Vehiculos V LEFT JOIN Usuarios U ON V.id_usuario = U.id WHERE V.placa = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, placa); // Establecer la placa en la consulta
+
+            // Ejecutar la consulta
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    correo = rs.getString("correo"); // Obtener el correo si existe
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Manejar el error
+        }
+
+        return correo; // Retornar el correo o null si no se encontró
+    }
+
+
 
     public boolean verificarUsuario(String identificacionUsuario, String pin, String codigoValidacion) {
         String selectSql = "SELECT codigo_validacion FROM Usuarios WHERE identificacion_usuario = ? AND pin = ?";
@@ -218,6 +241,32 @@ public class DatabaseManager {
         }
     }
 
+    public boolean iniciarSesionInspector(String identificacionInspector, String pin) {
+        String sql = "SELECT COUNT(*) FROM Inspectores WHERE identificacion_usuario = ? AND pin = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // Preparar la consulta con los parámetros
+            pstmt.setString(1, identificacionInspector);
+            pstmt.setString(2, pin);
+
+            // Ejecutar la consulta
+            var rs = pstmt.executeQuery();
+
+            // Verificar si se encontró un inspector con esa combinación
+            if (rs.next()) {
+                int count = rs.getInt(1); // Obtiene el conteo de registros
+                return count > 0; // Retorna true si hay al menos un resultado, de lo contrario false
+            }
+
+            return false; // No se encontró ninguna coincidencia
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false; // Si ocurre algún error, se retorna false
+        }
+    }
+
 
     public Integer obtenerIdUsuario(String identificacionUsuario, String pin) {
         String sql = "SELECT id FROM Usuarios WHERE identificacion_usuario = ? AND pin = ? AND verificado = 1";
@@ -268,6 +317,32 @@ public class DatabaseManager {
             return null; // Si ocurre algún error, se retorna null
         }
     }
+
+    public Integer obtenerIdInspector(String identificacionInspector, String pin) {
+        String sql = "SELECT id FROM Inspectores WHERE identificacion_usuario = ? AND pin = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // Preparar la consulta con los parámetros
+            pstmt.setString(1, identificacionInspector);
+            pstmt.setString(2, pin);
+
+            // Ejecutar la consulta
+            var rs = pstmt.executeQuery();
+
+            // Verificar si se encontró un inspector con esa combinación
+            if (rs.next()) {
+                return rs.getInt("id"); // Retorna el id del inspector encontrado
+            }
+
+            return null; // Retorna null si no se encontró ninguna coincidencia
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null; // Si ocurre algún error, se retorna null
+        }
+    }
+
 
 
 
@@ -1127,6 +1202,76 @@ public class DatabaseManager {
             e.printStackTrace(); // Manejar el error
         }
     }
+
+    public Integer obtenerIdUsuarioPorEspacio(int idEspacio) {
+        String sql = "SELECT id_usuario FROM Reservas WHERE id_espacio = ?"; // Asegúrate de que la columna se llama correctamente
+        Integer idUsuario = null; // Usamos Integer para permitir que pueda ser nulo
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, idEspacio); // Establecer el id de espacio como parámetro
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    idUsuario = rs.getInt("id_usuario"); // Obtener el id_usuario
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Manejar el error
+        }
+
+        return idUsuario; // Retornar el id_usuario como Integer
+    }
+
+    public boolean existeReservaPorEspacioYPlaca(int idEspacio, String placa) {
+        String sql = "SELECT COUNT(*) FROM Reservas WHERE id_espacio = ? AND placa = ?"; // Asegúrate de que las columnas se llaman correctamente
+        boolean existe = false;
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, idEspacio); // Establecer el id de espacio como parámetro
+            pstmt.setString(2, placa); // Establecer la placa como parámetro
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    existe = rs.getInt(1) > 0; // Si el conteo es mayor que 0, existe
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Manejar el error
+        }
+
+        return existe; // Retornar true si existe, false de lo contrario
+    }
+
+    public boolean insertarMulta(int idInspector, String placa, int costo, String fechaMultado) {
+        String sql = "INSERT INTO Multas (id_inspector, placa, costo, fecha_multado) VALUES (?, ?, ?, ?)";
+        boolean exito = false;
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // Establecer los parámetros de la consulta
+            pstmt.setInt(1, idInspector);       // Establecer el id_inspector
+            pstmt.setString(2, placa);          // Establecer la placa
+            pstmt.setInt(3, costo);             // Establecer el costo
+            pstmt.setString(4, fechaMultado);   // Establecer la fecha_multado como String
+
+            // Ejecutar la inserción
+            int filasInsertadas = pstmt.executeUpdate();
+            exito = filasInsertadas > 0; // Si se insertó al menos una fila, se considera un éxito
+        } catch (SQLException e) {
+            e.printStackTrace(); // Manejar el error
+        }
+
+        return exito; // Retornar true si la inserción fue exitosa, false de lo contrario
+    }
+
+
+
+
 
     public void sumarAcumuladosPorUsuario(int idUsuario, int nuevosAcumulados) {
         String sql = "UPDATE Usuarios SET acumulados = acumulados + ? WHERE id = ?";
