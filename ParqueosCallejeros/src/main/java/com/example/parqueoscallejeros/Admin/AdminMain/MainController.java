@@ -49,5 +49,16 @@ public class MainController {
         stage.show();
     }
 
+    public void switchToCambiarContraInspector(ActionEvent event) throws IOException { // REGISTRO
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/parqueoscallejeros/Admin/AdminMainFunctions/CambiarContraInspector.fxml"));
+        Parent root = loader.load();
+        CambiarContraInspector controller = loader.getController();
+        controller.setUserData(uniqueId, userId, userPin);
+        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
+
 
 }

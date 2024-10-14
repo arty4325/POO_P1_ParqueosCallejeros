@@ -289,6 +289,26 @@ public class DatabaseManager {
             return false; // Si algo falla, la inserción no fue exitosa
         }
     }
+    public boolean existeInspector(String identificacionInspector) {
+        String sql = "SELECT COUNT(*) FROM Inspectores WHERE identificacion_usuario = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, identificacionInspector); // Asignar el valor de la identificación
+
+            // Ejecutar la consulta
+            ResultSet rs = pstmt.executeQuery();
+
+            // Verificar si se encontró algún inspector con esa identificación
+            if (rs.next()) {
+                return rs.getInt(1) > 0; // Retorna true si el conteo es mayor que 0, lo que significa que existe
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Manejo de errores
+        }
+        return false; // Si ocurre un error o no se encontró coincidencia
+    }
 
     // Método para actualizar el codigo_cambio de un usuario
     public boolean actualizarCodigoCambioUsuario(String identificacionUsuario, int codigoCambio) {
@@ -321,6 +341,23 @@ public class DatabaseManager {
             return false; // Si algo falla, la actualización no fue exitosa
         }
     }
+
+    // Método para actualizar el codigo_cambio de un inspector
+    public boolean actualizarCodigoCambioInspector(String identificacionInspector, int codigoCambio) {
+        String sql = "UPDATE Inspectores SET codigo_cambio = ? WHERE identificacion_usuario = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, codigoCambio); // Asigna el nuevo codigo_cambio
+            pstmt.setString(2, identificacionInspector); // Asigna la identificacion_usuario del inspector
+            int rowsAffected = pstmt.executeUpdate(); // Ejecuta la actualización
+            return rowsAffected > 0; // Retorna true si se actualizó al menos un registro
+        } catch (SQLException e) {
+            e.printStackTrace(); // Puedes registrar el error para más detalles
+            return false; // Si algo falla, la actualización no fue exitosa
+        }
+    }
+
 
     // Método para obtener el correo electrónico de un administrador por su identificacion_usuario
     public String obtenerCorreoAdministrador(String identificacionUsuario) {
@@ -367,6 +404,29 @@ public class DatabaseManager {
             return null; // Si ocurre algún error, se retorna null
         }
     }
+
+    public String obtenerCorreoInspector(String identificacionInspector) {
+        String sql = "SELECT correo FROM Inspectores WHERE identificacion_usuario = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, identificacionInspector);
+
+            // Ejecutar la consulta
+            ResultSet rs = pstmt.executeQuery();
+
+            // Verificar si se encontró el inspector con esa identificación
+            if (rs.next()) {
+                return rs.getString("correo"); // Retorna el correo encontrado
+            }
+
+            return null; // Retorna null si no se encontró ninguna coincidencia
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null; // Si ocurre algún error, se retorna null
+        }
+    }
+
 
     // Método para cambiar el PIN de un usuario
     public boolean cambiarPinUsuario(String identificacionUsuario, int codigoCambio, String nuevoPin) {
@@ -427,6 +487,36 @@ public class DatabaseManager {
         }
         return false; // Retorna false si no se encontró coincidencia o si ocurrió un error
     }
+
+    public boolean cambiarPinInspector(String identificacionInspector, int codigoCambio, String nuevoPin) {
+        // Verificar si la identificación y el código de cambio coinciden
+        String verificarSql = "SELECT COUNT(*) FROM Inspectores WHERE identificacion_usuario = ? AND codigo_cambio = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmtVerificar = conn.prepareStatement(verificarSql)) {
+
+            pstmtVerificar.setString(1, identificacionInspector);
+            pstmtVerificar.setInt(2, codigoCambio);
+
+            // Ejecutar la consulta
+            var rs = pstmtVerificar.executeQuery();
+
+            if (rs.next() && rs.getInt(1) > 0) {
+                // Si coincide, actualizar el PIN
+                String updateSql = "UPDATE Inspectores SET pin = ? WHERE identificacion_usuario = ?";
+                try (PreparedStatement pstmtUpdate = conn.prepareStatement(updateSql)) {
+                    pstmtUpdate.setString(1, nuevoPin);
+                    pstmtUpdate.setString(2, identificacionInspector);
+                    int rowsAffected = pstmtUpdate.executeUpdate(); // Ejecuta la actualización
+                    return rowsAffected > 0; // Retorna true si se actualizó al menos un registro
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false; // Retorna false si no se encontró coincidencia o si ocurrió un error
+    }
+
 
     // Método para resetear el codigo_cambio de un usuario
     public boolean resetearCodigoCambioUsuario(String identificacionUsuario) {

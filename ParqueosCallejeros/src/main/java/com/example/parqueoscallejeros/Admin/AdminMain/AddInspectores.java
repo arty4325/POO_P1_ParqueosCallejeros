@@ -1,5 +1,6 @@
 package com.example.parqueoscallejeros.Admin.AdminMain;
 
+import com.example.parqueoscallejeros.EnvioCorreos;
 import com.example.parqueoscallejeros.dataBase.DatabaseManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -12,6 +13,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+import javax.mail.MessagingException;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.regex.Pattern;
@@ -62,7 +64,7 @@ public class AddInspectores {
 
 
 
-    public void validarDatosInspector() {
+    public void validarDatosInspector() throws MessagingException {
         // Nombre: string de 2 a 20 caracteres
         String nombre = varNombre.getText();
         if (nombre.length() < 2 || nombre.length() > 20) {
@@ -129,10 +131,25 @@ public class AddInspectores {
 
         databaseManager.insertarInspector(nombre, apellidos, telefono, correo, direccion, fechaIngreso,
                 identificacion, pin, terminal);
+
+        String correoUsuario = databaseManager.obtenerCorreoUsuario(userId);
+
+        String message =
+                "<p>La aplicacion de correos callejeros le envia saludos, " + userId + ",</p>" +
+                        "<p>Este correo se le envia debido a que usted acaba de agregar un Inspector al sistema.</p>" +
+                        "<p>El nombre del inspector es: <strong>" + nombre + "</strong></p>" +
+                        "<p>El apellido del inspector es: <strong>" + apellidos + "</strong></p>" +
+                        "<p>Este inspector ya puede hacer uso de la aplicacion.</p>" +
+                        "<p>Muchas gracias por confiar en nosotros.</p>" +
+                        "<p>Atentamente,<br>Parqueos Callejeros S.A</p>";
+
+        EnvioCorreos envioCorreos = new EnvioCorreos();
+        envioCorreos.createEmail(correoUsuario, "Se agrego un Inspector", message);
+        envioCorreos.sendEmail();
     }
 
 
-    public void enviarInformacion(ActionEvent event) throws IOException { // REGISTRO
+    public void enviarInformacion(ActionEvent event) throws IOException, MessagingException { // REGISTRO
         validarDatosInspector();
     }
 }
