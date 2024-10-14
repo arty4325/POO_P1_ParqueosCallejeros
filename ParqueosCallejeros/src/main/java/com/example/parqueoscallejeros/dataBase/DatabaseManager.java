@@ -38,6 +38,8 @@ public class DatabaseManager {
     }
 
 
+
+
     // Método para insertar un usuario
     public boolean insertarUsuario(String nombre, String apellido, String telefono, String correo,
                                    String direccion, String tarjetaCredito, String fechaVencimiento,
@@ -68,6 +70,32 @@ public class DatabaseManager {
             return false; // Si algo falla, la inserción no fue exitosa
         }
     }
+
+    public boolean insertarInspector(String nombre, String apellido, String telefono, String correo,
+                                     String direccion, LocalDate fechaIngreso, String identificacionUsuario,
+                                     String pin, String terminalInspeccion) {
+        String sql = "INSERT INTO Inspectores (nombre, apellidos, telefono, correo, direccion, fecha_ingreso, identificacion_usuario, pin, terminal_inspeccion) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, nombre);
+            pstmt.setString(2, apellido);
+            pstmt.setString(3, telefono);
+            pstmt.setString(4, correo);
+            pstmt.setString(5, direccion);
+            pstmt.setString(6, fechaIngreso.toString()); // Convertimos LocalDate a String
+            pstmt.setString(7, identificacionUsuario);
+            pstmt.setString(8, pin);
+            pstmt.setString(9, terminalInspeccion); // Agregamos el terminal de inspección
+            pstmt.executeUpdate(); // Ejecuta la inserción
+            return true; // Inserción fue exitosa
+        } catch (SQLException e) {
+            e.printStackTrace(); // Puedes registrar el error para más detalles
+            return false; // Si algo falla, la inserción no fue exitosa
+        }
+    }
+
 
     public boolean verificarUsuario(String identificacionUsuario, String pin, String codigoValidacion) {
         String selectSql = "SELECT codigo_validacion FROM Usuarios WHERE identificacion_usuario = ? AND pin = ?";
