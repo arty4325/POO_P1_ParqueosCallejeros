@@ -12,7 +12,10 @@
             <Font size="48.0" />
          </font>
       </Text>
-      <Button layoutX="14.0" layoutY="78.0" mnemonicParsing="false" onAction="#switchToAgregarParqueos" text="Agregar Vehiculos" />
+      <Button layoutX="26.0" layoutY="101.0" mnemonicParsing="false" onAction="#switchToAgregarParqueos" prefHeight="25.0" prefWidth="121.0" text="Agregar Vehiculos" />
+      <Button layoutX="26.0" layoutY="144.0" mnemonicParsing="false" onAction="#switchToParquear" text="Parquear" />
+      <Button layoutX="364.0" layoutY="101.0" mnemonicParsing="false" onAction="#switchToDesaparquear" text="Desaparquear" />
+      <Button layoutX="26.0" layoutY="188.0" mnemonicParsing="false" onAction="#switchToAgregarTiempo" text="Agregar Tiempo " />
    </children>
 
 </AnchorPane>

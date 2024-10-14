@@ -1,7 +1,11 @@
 package com.example.parqueoscallejeros.dataBase;
 // cambio
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatabaseManager {
     // Ahora le doy la ruta a la base de datos
@@ -34,6 +38,8 @@ public class DatabaseManager {
     }
 
 
+
+
     // Método para insertar un usuario
     public boolean insertarUsuario(String nombre, String apellido, String telefono, String correo,
                                    String direccion, String tarjetaCredito, String fechaVencimiento,
@@ -64,6 +70,32 @@ public class DatabaseManager {
             return false; // Si algo falla, la inserción no fue exitosa
         }
     }
+
+    public boolean insertarInspector(String nombre, String apellido, String telefono, String correo,
+                                     String direccion, LocalDate fechaIngreso, String identificacionUsuario,
+                                     String pin, String terminalInspeccion) {
+        String sql = "INSERT INTO Inspectores (nombre, apellidos, telefono, correo, direccion, fecha_ingreso, identificacion_usuario, pin, terminal_inspeccion) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, nombre);
+            pstmt.setString(2, apellido);
+            pstmt.setString(3, telefono);
+            pstmt.setString(4, correo);
+            pstmt.setString(5, direccion);
+            pstmt.setString(6, fechaIngreso.toString()); // Convertimos LocalDate a String
+            pstmt.setString(7, identificacionUsuario);
+            pstmt.setString(8, pin);
+            pstmt.setString(9, terminalInspeccion); // Agregamos el terminal de inspección
+            pstmt.executeUpdate(); // Ejecuta la inserción
+            return true; // Inserción fue exitosa
+        } catch (SQLException e) {
+            e.printStackTrace(); // Puedes registrar el error para más detalles
+            return false; // Si algo falla, la inserción no fue exitosa
+        }
+    }
+
 
     public boolean verificarUsuario(String identificacionUsuario, String pin, String codigoValidacion) {
         String selectSql = "SELECT codigo_validacion FROM Usuarios WHERE identificacion_usuario = ? AND pin = ?";
@@ -257,6 +289,26 @@ public class DatabaseManager {
             return false; // Si algo falla, la inserción no fue exitosa
         }
     }
+    public boolean existeInspector(String identificacionInspector) {
+        String sql = "SELECT COUNT(*) FROM Inspectores WHERE identificacion_usuario = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, identificacionInspector); // Asignar el valor de la identificación
+
+            // Ejecutar la consulta
+            ResultSet rs = pstmt.executeQuery();
+
+            // Verificar si se encontró algún inspector con esa identificación
+            if (rs.next()) {
+                return rs.getInt(1) > 0; // Retorna true si el conteo es mayor que 0, lo que significa que existe
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Manejo de errores
+        }
+        return false; // Si ocurre un error o no se encontró coincidencia
+    }
 
     // Método para actualizar el codigo_cambio de un usuario
     public boolean actualizarCodigoCambioUsuario(String identificacionUsuario, int codigoCambio) {
@@ -289,6 +341,23 @@ public class DatabaseManager {
             return false; // Si algo falla, la actualización no fue exitosa
         }
     }
+
+    // Método para actualizar el codigo_cambio de un inspector
+    public boolean actualizarCodigoCambioInspector(String identificacionInspector, int codigoCambio) {
+        String sql = "UPDATE Inspectores SET codigo_cambio = ? WHERE identificacion_usuario = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, codigoCambio); // Asigna el nuevo codigo_cambio
+            pstmt.setString(2, identificacionInspector); // Asigna la identificacion_usuario del inspector
+            int rowsAffected = pstmt.executeUpdate(); // Ejecuta la actualización
+            return rowsAffected > 0; // Retorna true si se actualizó al menos un registro
+        } catch (SQLException e) {
+            e.printStackTrace(); // Puedes registrar el error para más detalles
+            return false; // Si algo falla, la actualización no fue exitosa
+        }
+    }
+
 
     // Método para obtener el correo electrónico de un administrador por su identificacion_usuario
     public String obtenerCorreoAdministrador(String identificacionUsuario) {
@@ -335,6 +404,29 @@ public class DatabaseManager {
             return null; // Si ocurre algún error, se retorna null
         }
     }
+
+    public String obtenerCorreoInspector(String identificacionInspector) {
+        String sql = "SELECT correo FROM Inspectores WHERE identificacion_usuario = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, identificacionInspector);
+
+            // Ejecutar la consulta
+            ResultSet rs = pstmt.executeQuery();
+
+            // Verificar si se encontró el inspector con esa identificación
+            if (rs.next()) {
+                return rs.getString("correo"); // Retorna el correo encontrado
+            }
+
+            return null; // Retorna null si no se encontró ninguna coincidencia
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null; // Si ocurre algún error, se retorna null
+        }
+    }
+
 
     // Método para cambiar el PIN de un usuario
     public boolean cambiarPinUsuario(String identificacionUsuario, int codigoCambio, String nuevoPin) {
@@ -395,6 +487,36 @@ public class DatabaseManager {
         }
         return false; // Retorna false si no se encontró coincidencia o si ocurrió un error
     }
+
+    public boolean cambiarPinInspector(String identificacionInspector, int codigoCambio, String nuevoPin) {
+        // Verificar si la identificación y el código de cambio coinciden
+        String verificarSql = "SELECT COUNT(*) FROM Inspectores WHERE identificacion_usuario = ? AND codigo_cambio = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmtVerificar = conn.prepareStatement(verificarSql)) {
+
+            pstmtVerificar.setString(1, identificacionInspector);
+            pstmtVerificar.setInt(2, codigoCambio);
+
+            // Ejecutar la consulta
+            var rs = pstmtVerificar.executeQuery();
+
+            if (rs.next() && rs.getInt(1) > 0) {
+                // Si coincide, actualizar el PIN
+                String updateSql = "UPDATE Inspectores SET pin = ? WHERE identificacion_usuario = ?";
+                try (PreparedStatement pstmtUpdate = conn.prepareStatement(updateSql)) {
+                    pstmtUpdate.setString(1, nuevoPin);
+                    pstmtUpdate.setString(2, identificacionInspector);
+                    int rowsAffected = pstmtUpdate.executeUpdate(); // Ejecuta la actualización
+                    return rowsAffected > 0; // Retorna true si se actualizó al menos un registro
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false; // Retorna false si no se encontró coincidencia o si ocurrió un error
+    }
+
 
     // Método para resetear el codigo_cambio de un usuario
     public boolean resetearCodigoCambioUsuario(String identificacionUsuario) {
@@ -498,6 +620,548 @@ public class DatabaseManager {
             return false; // Si ocurre algún error, se retorna false
         }
     }
+
+    public List<String> obtenerPlacasPorUsuario(int idUsuario) {
+        List<String> placas = new ArrayList<>();
+        // Consulta modificada para verificar que parqueado sea 0
+        String sql = "SELECT placa FROM Vehiculos WHERE id_usuario = ? AND parqueado = 0";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, idUsuario);
+
+            // Ejecutar la consulta
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    String placa = rs.getString("placa"); // Obtener la placa
+                    placas.add(placa); // Agregar a la lista
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Puedes registrar el error para más detalles
+        }
+
+        return placas; // Retorna la lista de placas
+    }
+
+    public List<String> obtenerPlacasOcupadasPorUsuario(int idUsuario) {
+        List<String> placas = new ArrayList<>();
+        // Consulta para verificar que parqueado sea 1 (ocupado)
+        String sql = "SELECT placa FROM Vehiculos WHERE id_usuario = ? AND parqueado = 1";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, idUsuario);
+
+            // Ejecutar la consulta
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    String placa = rs.getString("placa"); // Obtener la placa
+                    placas.add(placa); // Agregar a la lista
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Puedes registrar el error para más detalles
+        }
+
+        return placas; // Retorna la lista de placas ocupadas
+    }
+
+
+
+    public List<Integer> obtenerEspaciosDisponibles() {
+        List<Integer> espaciosDisponibles = new ArrayList<>();
+        String sql = "SELECT numero_espacio FROM EspaciosParqueo WHERE estado = 0";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                int numeroEspacio = rs.getInt("numero_espacio"); // Obtener el número de espacio
+                espaciosDisponibles.add(numeroEspacio); // Agregar a la lista
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Puedes registrar el error para más detalles
+        }
+
+        return espaciosDisponibles; // Retorna la lista de espacios disponibles
+    }
+
+    public boolean estaEspacioDisponible(int numeroEspacio) {
+        String sql = "SELECT estado FROM EspaciosParqueo WHERE numero_espacio = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, numeroEspacio);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    int estado = rs.getInt("estado"); // Obtener el estado del espacio
+                    return estado == 0; // Retorna true si está en estado 0, false si está en 1
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Puedes registrar el error para más detalles
+        }
+
+        return false; // Retorna false si no se encuentra el espacio o si tiene estado 1
+    }
+
+    public String obtenerHorarioInicio(int idConfiguracion) {
+        String sql = "SELECT horario_inicio FROM ConfiguracionParqueo WHERE id = ?";
+        String horarioInicio = null;
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, idConfiguracion);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    horarioInicio = rs.getString("horario_inicio"); // Obtener el horario de inicio como String
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Puedes registrar el error para más detalles
+        }
+
+        return horarioInicio; // Retorna el horario de inicio como String
+    }
+
+    public String obtenerHorarioFin(int idConfiguracion) {
+        String sql = "SELECT horario_fin FROM ConfiguracionParqueo WHERE id = ?";
+        String horarioFin = null;
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, idConfiguracion);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    horarioFin = rs.getString("horario_fin"); // Obtener el horario de fin como String
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Puedes registrar el error para más detalles
+        }
+
+        return horarioFin; // Retorna el horario de fin como String
+    }
+
+
+
+    public int obtenerPrecioPorHora(int idConfiguracion) {
+        String sql = "SELECT precio_por_hora FROM ConfiguracionParqueo WHERE id = ?";
+        int precioPorHora = 0;
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, idConfiguracion);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    precioPorHora = rs.getInt("precio_por_hora"); // Obtener el precio por hora
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Puedes registrar el error para más detalles
+        }
+
+        return precioPorHora; // Retorna el precio por hora
+    }
+
+
+
+    public int obtenerTiempoMinimo(int idConfiguracion) {
+        String sql = "SELECT tiempo_minimo FROM ConfiguracionParqueo WHERE id = ?";
+        int tiempoMinimo = 0;
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, idConfiguracion);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    tiempoMinimo = rs.getInt("tiempo_minimo"); // Obtener el tiempo mínimo
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Puedes registrar el error para más detalles
+        }
+
+        return tiempoMinimo; // Retorna el tiempo mínimo
+    }
+
+
+    public int obtenerCostoMulta(int idConfiguracion) {
+        String sql = "SELECT costo_multa FROM ConfiguracionParqueo WHERE id = ?";
+        int costoMulta = 0;
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, idConfiguracion);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    costoMulta = rs.getInt("costo_multa"); // Obtener el costo de multa
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Puedes registrar el error para más detalles
+        }
+
+        return costoMulta; // Retorna el costo de multa
+    }
+
+    public void insertarReserva(int idUsuario, int idEspacio, String placa, int tiempoReservado, int costo, String fechaReserva) {
+        String sql = "INSERT INTO Reservas (id_usuario, id_espacio, placa, tiempo_reservado, costo, fecha_reserva) VALUES (?, ?, ?, ?, ?, ?)";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // Asignar los valores a cada parámetro de la consulta
+            pstmt.setInt(1, idUsuario);
+            pstmt.setInt(2, idEspacio);
+            pstmt.setString(3, placa);
+            pstmt.setInt(4, tiempoReservado);
+            pstmt.setInt(5, costo);
+            pstmt.setString(6, fechaReserva); // Asignar fecha como String
+
+            // Ejecutar la consulta
+            pstmt.executeUpdate();
+            System.out.println("Reserva insertada correctamente.");
+        } catch (SQLException e) {
+            e.printStackTrace(); // Manejar el error
+        }
+    }
+
+    public void insertarHistorialUso(int idUsuario, int idEspacio, int costo, int tiempoOcupado, String fechaUso) {
+        String sql = "INSERT INTO HistorialUso (id_usuario, id_espacio, costo, tiempo_ocupado, fecha_uso) VALUES (?, ?, ?, ?, ?)";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // Asignar los valores a cada parámetro de la consulta
+            pstmt.setInt(1, idUsuario);
+            pstmt.setInt(2, idEspacio);
+            pstmt.setInt(3, costo);
+            pstmt.setInt(4, tiempoOcupado);
+            pstmt.setString(5, fechaUso); // Asignar fecha como String
+
+            // Ejecutar la consulta
+            pstmt.executeUpdate();
+            System.out.println("Historial de uso insertado correctamente.");
+        } catch (SQLException e) {
+            e.printStackTrace(); // Manejar el error
+        }
+    }
+
+
+    public void actualizarEstadoEspacioParqueado(int numeroEspacio) {
+        String sql = "UPDATE EspaciosParqueo SET estado = 1 WHERE numero_espacio = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // Asignar el valor del número de espacio al parámetro de la consulta
+            pstmt.setInt(1, numeroEspacio);
+
+            // Ejecutar la actualización
+            int rowsAffected = pstmt.executeUpdate();
+
+            // Verificar si la actualización fue exitosa
+            if (rowsAffected > 0) {
+                System.out.println("El estado del espacio ha sido actualizado correctamente.");
+            } else {
+                System.out.println("No se encontró ningún espacio con ese número.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Manejar el error
+        }
+    }
+
+    public void actualizarEstadoVehiculoParqueado(int idUsuario, String placa) {
+        String sql = "UPDATE Vehiculos SET parqueado = 1 WHERE placa = ? AND id_usuario = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // Asignar los valores de placa y idUsuario a los parámetros de la consulta
+            pstmt.setString(1, placa);
+            pstmt.setInt(2, idUsuario);
+
+            // Ejecutar la actualización
+            int rowsAffected = pstmt.executeUpdate();
+
+            // Verificar si la actualización fue exitosa
+            if (rowsAffected > 0) {
+                System.out.println("El estado del vehículo ha sido actualizado correctamente.");
+            } else {
+                System.out.println("No se encontró ningún vehículo con esa placa y usuario.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Manejar el error
+        }
+    }
+
+    public Integer obtenerIdEspacioPorPlaca(String placa) {
+        Integer idEspacio = null; // Inicializar la variable a null para indicar que no se ha encontrado
+
+        // Consulta para obtener el id_espacio basado en la placa
+        String sql = "SELECT id_espacio FROM Reservas WHERE placa = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, placa); // Asignar la placa al parámetro de la consulta
+
+            // Ejecutar la consulta
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    idEspacio = rs.getInt("id_espacio"); // Obtener el id_espacio
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Manejar el error
+        }
+
+        return idEspacio; // Retornar el id_espacio o null si no se encontró
+    }
+
+    public String obtenerFechaReserva(int idReserva) {
+        String sql = "SELECT fecha_reserva FROM Reservas WHERE id_espacio = ?"; // Asegúrate de que la columna se llama correctamente
+        String fechaReserva = null;
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, idReserva); // Establecer el id de reserva como parámetro
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    fechaReserva = rs.getString("fecha_reserva"); // Obtener la fecha de reserva como String
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Manejar el error
+        }
+
+        return fechaReserva; // Retornar la fecha de reserva como String
+    }
+
+    public Integer obtenerTiempoReservado(int idReserva) {
+        String sql = "SELECT tiempo_reservado FROM Reservas WHERE id_espacio = ?"; // Asegúrate de que la columna se llama correctamente
+        Integer tiempoReservado = null; // Usamos Integer para permitir que pueda ser nulo
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, idReserva); // Establecer el id de reserva como parámetro
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    tiempoReservado = rs.getInt("tiempo_reservado"); // Obtener el tiempo reservado como Integer
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Manejar el error
+        }
+
+        return tiempoReservado; // Retornar el tiempo reservado como Integer
+    }
+
+    public void actualizarEstadoVehiculoDesparqueado(String placa) {
+        String sql = "UPDATE Vehiculos SET parqueado = 0 WHERE placa = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // Asignar el valor de la placa al parámetro de la consulta
+            pstmt.setString(1, placa);
+
+            // Ejecutar la actualización
+            int rowsAffected = pstmt.executeUpdate();
+
+            // Verificar si la actualización fue exitosa
+            if (rowsAffected > 0) {
+                System.out.println("El estado del vehículo ha sido actualizado a no parqueado correctamente.");
+            } else {
+                System.out.println("No se encontró ningún vehículo con esa placa.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Manejar el error
+        }
+    }
+
+    public void actualizarEstadoEspacioDesparqueado(int numeroEspacio) {
+        String sql = "UPDATE EspaciosParqueo SET estado = 0 WHERE numero_espacio = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // Asignar el valor del número de espacio al parámetro de la consulta
+            pstmt.setInt(1, numeroEspacio);
+
+            // Ejecutar la actualización
+            int rowsAffected = pstmt.executeUpdate();
+
+            // Verificar si la actualización fue exitosa
+            if (rowsAffected > 0) {
+                System.out.println("El estado del espacio ha sido actualizado a no ocupado correctamente.");
+            } else {
+                System.out.println("No se encontró ningún espacio con ese número.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Manejar el error
+        }
+    }
+    public void actualizarTiempoOcupado(int idUsuario, int nuevoTiempoOcupado, String fechaReserva) {
+        String sql = "UPDATE HistorialUso SET tiempo_ocupado = ? WHERE id_usuario = ? AND fecha_uso = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // Asignar los valores a cada parámetro de la consulta
+            pstmt.setInt(1, nuevoTiempoOcupado);
+            pstmt.setInt(2, idUsuario);
+            pstmt.setString(3, fechaReserva); // Asegurarse de que el formato de fecha coincide
+
+            // Ejecutar la actualización
+            int rowsAffected = pstmt.executeUpdate();
+
+            // Verificar si la actualización fue exitosa
+            if (rowsAffected > 0) {
+                System.out.println("El tiempo ocupado ha sido actualizado correctamente.");
+            } else {
+                System.out.println("No se encontró ningún historial de uso con ese usuario o la fecha no coincide.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Manejar el error
+        }
+    }
+
+    public void actualizarCostoEnTablaCosto(int idUsuario, int nuevoCosto, String fechaReserva) {
+        String sql = "UPDATE HistorialUso SET costo = ? WHERE id_usuario = ? AND fecha_uso = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // Asignar los valores a cada parámetro de la consulta
+            pstmt.setInt(1, nuevoCosto);
+            pstmt.setInt(2, idUsuario);
+            pstmt.setString(3, fechaReserva); // Asegurarse de que el formato de fecha coincide
+
+            // Ejecutar la actualización
+            int rowsAffected = pstmt.executeUpdate();
+
+            // Verificar si la actualización fue exitosa
+            if (rowsAffected > 0) {
+                System.out.println("El costo ha sido actualizado correctamente en la tabla Costo.");
+            } else {
+                System.out.println("No se encontró ningún registro en la tabla Costo con ese usuario o la fecha no coincide.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Manejar el error
+        }
+    }
+
+
+    public void eliminarReservaPorEspacio(int idEspacio) {
+        String sql = "DELETE FROM Reservas WHERE id_espacio = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // Asignar el valor de idEspacio al parámetro de la consulta
+            pstmt.setInt(1, idEspacio);
+
+            // Ejecutar la eliminación
+            int rowsAffected = pstmt.executeUpdate();
+
+            // Verificar si la eliminación fue exitosa
+            if (rowsAffected > 0) {
+                System.out.println("La reserva ha sido eliminada correctamente.");
+            } else {
+                System.out.println("No se encontró ninguna reserva con ese id de espacio.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Manejar el error
+        }
+    }
+
+    public void sumarAcumuladosPorUsuario(int idUsuario, int nuevosAcumulados) {
+        String sql = "UPDATE Usuarios SET acumulados = acumulados + ? WHERE id = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // Asignar el nuevo valor de acumulados y el idUsuario a los parámetros de la consulta
+            pstmt.setInt(1, nuevosAcumulados);
+            pstmt.setInt(2, idUsuario);
+
+            // Ejecutar la actualización
+            int rowsAffected = pstmt.executeUpdate();
+
+            // Verificar si la actualización fue exitosa
+            if (rowsAffected > 0) {
+                System.out.println("Los acumulados del usuario han sido actualizados correctamente.");
+            } else {
+                System.out.println("No se encontró ningún usuario con ese id.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Manejar el error
+        }
+    }
+
+    public void aumentarTiempoYCostoPorPlaca(String placa, int tiempoAumentar, int costoAumentar) {
+        // SQL para actualizar el tiempo_reservado y el costo
+        String sql = "UPDATE Reservas SET tiempo_reservado = tiempo_reservado + ?, costo = costo + ? " +
+                "WHERE placa = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // Establecer los parámetros para aumentar el tiempo y el costo
+            pstmt.setInt(1, tiempoAumentar);
+            pstmt.setInt(2, costoAumentar);
+            pstmt.setString(3, placa);
+
+            // Imprimir la consulta para depuración
+            System.out.println("Ejecutando la actualización para la placa: " + placa);
+            System.out.println("Tiempo a aumentar: " + tiempoAumentar + ", Costo a aumentar: " + costoAumentar);
+
+            // Ejecutar la actualización
+            int rowsAffected = pstmt.executeUpdate();
+
+            // Verificar si la actualización fue exitosa
+            if (rowsAffected > 0) {
+                System.out.println("El tiempo y el costo han sido aumentados correctamente para la placa: " + placa);
+            } else {
+                System.out.println("No se encontró ninguna reserva para la placa: " + placa);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Manejar el error
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
 
 
 
