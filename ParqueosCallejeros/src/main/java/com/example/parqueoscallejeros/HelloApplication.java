@@ -15,7 +15,7 @@ public class HelloApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         primaryStage = stage;
-        showAdministradores(); // Iniciar con la primera escena
+        showInspectores(); // Iniciar con la primera escena
     }
 
     // Método para mostrar la primera escena
@@ -38,7 +38,7 @@ public class HelloApplication extends Application {
 
     // Método para mostrar la tercera escena
     public static void showInspectores() throws IOException {
-        Parent root = FXMLLoader.load(HelloApplication.class.getResource("/com/example/parqueoscallejeros/User/UserLogin/Scene3.fxml"));
+        Parent root = FXMLLoader.load(HelloApplication.class.getResource("/com/example/parqueoscallejeros/Inspectores/InspectorLogin/Scene1.fxml"));
         Scene scene = new Scene(root);
         primaryStage.setTitle("Scene 3");
         primaryStage.setScene(scene);
