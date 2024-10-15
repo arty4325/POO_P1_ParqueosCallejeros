@@ -15,5 +15,6 @@
       </Text>
       <ComboBox fx:id="carrosParqueadosAccordion" layoutX="54.0" layoutY="120.0" prefWidth="150.0" />
       <Button layoutX="236.0" layoutY="120.0" mnemonicParsing="false" onAction="#desaparcarAction" text="Desaparcar" />
+      <Button layoutX="512.0" layoutY="346.0" mnemonicParsing="false" onAction="#backMain" text="Volver" />
    </children>
 </AnchorPane>

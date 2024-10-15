@@ -4,6 +4,8 @@ import com.example.parqueoscallejeros.EnvioCorreos;
 import com.example.parqueoscallejeros.dataBase.DatabaseManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
@@ -110,6 +112,23 @@ public class Desaparcar {
     }
 
 
+    public void backMain(ActionEvent event) throws IOException { // REGISTRO
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/parqueoscallejeros/User/UserMainFunctions/UsuarioMain.fxml"));
+        Parent root = loader.load();
+
+        // Obtén el controlador del nuevo FXML
+        MainController controller = loader.getController();
+
+        // Pasa el valor (por ejemplo, el idUsuario)
+        controller.setUserData(this.uniqueId, this.userId, this.userPin);
+
+        // Cambia la escena
+        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
+
     public void desaparcarAction(ActionEvent event) throws IOException, MessagingException {
         DatabaseManager databaseManager = new DatabaseManager();
         String placaSeleccionada = carrosParqueadosAccordion.getSelectionModel().getSelectedItem();
@@ -165,6 +184,20 @@ public class Desaparcar {
             EnvioCorreos envioCorreos = new EnvioCorreos();
             envioCorreos.createEmail(correoUsuario, "Informacion Carro Desaparcado", message);
             envioCorreos.sendEmail();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/parqueoscallejeros/User/UserMainFunctions/UsuarioMain.fxml"));
+            Parent root = loader.load();
+
+            // Obtén el controlador del nuevo FXML
+            MainController controller = loader.getController();
+
+            // Pasa el valor (por ejemplo, el idUsuario)
+            controller.setUserData(this.uniqueId, this.userId, this.userPin);
+
+            // Cambia la escena
+            stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+            scene = new Scene(root);
+            stage.setScene(scene);
+            stage.show();
 
         }
     }

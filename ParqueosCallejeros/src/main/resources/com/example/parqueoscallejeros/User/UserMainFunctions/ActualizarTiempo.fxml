@@ -21,5 +21,6 @@
       <TextField fx:id="tiempoAdicional" layoutX="246.0" layoutY="179.0" />
       <Text layoutX="82.0" layoutY="196.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tiempo Adicional" />
       <Label fx:id="infoInput" layoutX="32.0" layoutY="216.0" prefHeight="17.0" prefWidth="531.0" />
+      <Button layoutX="503.0" layoutY="338.0" mnemonicParsing="false" onAction="#switchToMain" text="Volver" />
    </children>
 </AnchorPane>

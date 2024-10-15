@@ -58,6 +58,22 @@ public class MainController {
         stage.show();
     }
 
+    public void switchToMain(ActionEvent event) throws IOException { // REGISTRO
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/parqueoscallejeros/User/UserMainFunctions/UsuarioMain.fxml"));
+        Parent root = loader.load();
+
+        // Obtén el controlador del nuevo FXML
+        MainController controller = loader.getController();
+
+        // Pasa el valor (por ejemplo, el idUsuario)
+        controller.setUserData(this.uniqueId, this.userId, this.userPin);
+
+        // Cambia la escena
+        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
     public void switchToParquear(ActionEvent event) throws IOException { // REGISTRO
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/parqueoscallejeros/User/UserMainFunctions/Parquear1.fxml"));
         Parent root = loader.load();
