@@ -22,9 +22,14 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 public class ConfigParqueo {
+    private Stage stage;
+    private Scene scene;
+    private Parent root;
+
     private int uniqueId;
     private String userId;
     private String userPin;
+
 
     @FXML
     private ComboBox<Integer> startHour;
@@ -58,6 +63,7 @@ public class ConfigParqueo {
 
     @FXML
     private Button submitButton;
+
 
     // Este método se llama automáticamente al cargar la escena
     @FXML
@@ -93,6 +99,17 @@ public class ConfigParqueo {
         System.out.println("ID único: " + uniqueId);
         System.out.println("ID usuario: " + userId);
         System.out.println("PIN usuario: " + userPin);
+    }
+
+    public void switchToAdmin(ActionEvent event) throws IOException { // REGISTRO
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/parqueoscallejeros/Admin/AdminMainFunctions/AdminMain.fxml"));
+        Parent root = loader.load();
+        MainController controller = loader.getController();
+        controller.setUserData(uniqueId, userId, userPin);
+        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
     }
 
 

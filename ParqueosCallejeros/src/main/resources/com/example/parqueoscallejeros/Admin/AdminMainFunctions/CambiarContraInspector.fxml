@@ -24,5 +24,6 @@
       <Text layoutX="165.0" layoutY="259.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Nuevo Pin" />
       <Button layoutX="367.0" layoutY="290.0" mnemonicParsing="false" onAction="#cargarPin" text="Cargar Datos" />
       <Label fx:id="infoSend" layoutX="71.0" layoutY="294.0" prefHeight="17.0" prefWidth="256.0" />
+      <Button layoutX="499.0" layoutY="340.0" mnemonicParsing="false" onAction="#switchToAdmin" text="Volver" />
    </children>
 </AnchorPane>

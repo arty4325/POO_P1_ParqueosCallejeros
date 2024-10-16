@@ -53,6 +53,19 @@ public class AddInspectores {
     @FXML
     private Label messageInfo;
 
+
+    public void switchToAdmin(ActionEvent event) throws IOException { // REGISTRO
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/parqueoscallejeros/Admin/AdminMainFunctions/AdminMain.fxml"));
+        Parent root = loader.load();
+        MainController controller = loader.getController();
+        controller.setUserData(uniqueId, userId, userPin);
+        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+
     public void setUserData(int id, String userId, String userPin) {
         System.out.println(id);
         System.out.println(userId);
@@ -146,6 +159,8 @@ public class AddInspectores {
         EnvioCorreos envioCorreos = new EnvioCorreos();
         envioCorreos.createEmail(correoUsuario, "Se agrego un Inspector", message);
         envioCorreos.sendEmail();
+
+
     }
 
 
