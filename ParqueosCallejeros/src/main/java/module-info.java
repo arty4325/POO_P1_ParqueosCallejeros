@@ -13,8 +13,10 @@ module com.example.parqueoscallejeros {
     requires jakarta.activation;
     requires jdk.localedata;
     requires jdk.compiler;
-    requires jdk.jconsole; // Añade esta línea si usas Jakarta Activation
+    requires jdk.jconsole;
+    requires itextpdf; // Añade esta línea si usas Jakarta Activation
 
+    opens com.example.parqueoscallejeros.Reportes to javafx.fxml;
     opens com.example.parqueoscallejeros to javafx.fxml;
     opens com.example.parqueoscallejeros.User.UserLogin to javafx.fxml;  // Abre el paquete para FXML
     opens com.example.parqueoscallejeros.User.UserMainFunctions to javafx.fxml;
@@ -33,4 +35,5 @@ module com.example.parqueoscallejeros {
     exports com.example.parqueoscallejeros.Admin.AdminMain;
     exports com.example.parqueoscallejeros.Inspectores.InspectoresLogin;
     exports com.example.parqueoscallejeros.Inspectores.InspectoresMain;
+    exports com.example.parqueoscallejeros.Reportes;
 }
