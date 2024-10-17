@@ -10,9 +10,9 @@
       <Button layoutX="131.0" layoutY="71.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="134.0" text="Ingresos de dinero" />
       <Button layoutX="131.0" layoutY="111.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="134.0" onAction="#dineroMultasPdf" text="Ingresos por multas" />
       <Button layoutX="131.0" layoutY="149.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="134.0" text="Espacios de parqueos" />
-      <Button layoutX="131.0" layoutY="186.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="134.0" text="Historial de uso" />
+      <Button layoutX="131.0" layoutY="186.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="134.0" onAction="#historialUsoPdf" text="Historial de uso" />
       <Button layoutX="131.0" layoutY="226.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="134.0" onAction="#multasPdf" text="Historial de multas" />
-      <Button layoutX="131.0" layoutY="266.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="134.0" text="Historial del parqueo" />
+      <Button layoutX="131.0" layoutY="266.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="134.0" text= "Historial del parqueo" />
       <Button layoutX="131.0" layoutY="303.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="134.0" text="Estadistica resumida" />
       <DatePicker fx:id="fechaInicioPicker" layoutX="335.0" layoutY="111.0" />
       <DatePicker fx:id="fechaFinPicker" layoutX="335.0" layoutY="199.0" />
