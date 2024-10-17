@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.parqueoscallejeros.Reportes.generadorPdf">
+   <children>
+      <Label layoutX="223.0" layoutY="30.0" text="Reportes">
+         <font>
+            <Font name="Arial Black" size="31.0" />
+         </font>
+      </Label>
+      <Button layoutX="242.0" layoutY="122.0" mnemonicParsing="false" onAction="#EspacioParqueoTodos" text="Todos los espacios" />
+      <Button layoutX="242.0" layoutY="161.0" mnemonicParsing="false" onAction="#EspacioParqueoOcupados" text="Espacios ocupados" />
+      <Button layoutX="251.0" layoutY="200.0" mnemonicParsing="false" onAction="#EspacioParqueoVacios" text="Espacios vacios" />
+      <Button layoutX="245.0" layoutY="241.0" mnemonicParsing="false" onAction="#multasUserPdf" text="Multas reliazadas" />
+   </children>
+</AnchorPane>
