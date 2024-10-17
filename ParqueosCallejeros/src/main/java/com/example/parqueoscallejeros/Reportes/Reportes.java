@@ -145,6 +145,43 @@ public class Reportes {
         }
     }
 
+    public void agregarTablaHistorialUso(LocalDateTime fechaInicio, LocalDateTime fechaFin) {
+
+        try {
+            PdfPTable tabla = new PdfPTable(6); // 3 columnas: id, costo, fecha
+            tabla.addCell("Id");
+            tabla.addCell("Id Usuario");
+            tabla.addCell("Id Espacio");
+            tabla.addCell("Costo");
+            tabla.addCell("Tiempo Ocupado");
+            tabla.addCell("Fecha de Uso");
+
+            HistorialDeUsoDAO historialDeUsoDAO = new HistorialDeUsoDAO();
+            List<HistorialDeUso> listhistorialDeUso = historialDeUsoDAO.mostrarHistorialUso(fechaInicio, fechaFin); // Asegúrate de que este método existe
+
+            // Verifica que la lista de multas no sea nula
+            if (listhistorialDeUso != null && !listhistorialDeUso.isEmpty()) {
+                for (HistorialDeUso historialDeUso : listhistorialDeUso) {
+                    tabla.addCell(String.valueOf(historialDeUso.getId()));               // Agrega el id de la multa
+                    tabla.addCell(String.valueOf(historialDeUso.getIdUsuario()));
+                    tabla.addCell(String.valueOf(historialDeUso.getIdEspacio()));
+                    tabla.addCell(String.valueOf(historialDeUso.getCosto()));            // Agrega el costo de la multa
+                    tabla.addCell(String.valueOf(historialDeUso.getTiempoOcupado()));
+                    tabla.addCell(historialDeUso.getFechaUso().toString());          // Agrega la fecha en que se multó
+                }
+            } else {
+                // Manejar el caso en que no hay multas
+                tabla.addCell("No se encontraron registros.");
+                for (int i = 0; i < 4; i++) {
+                    tabla.addCell(""); // Agrega celdas vacías para completar las columnas
+                }
+            }
+            documento.add(tabla);
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 
     public void cerrarDocumento(){
