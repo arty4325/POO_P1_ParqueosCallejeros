@@ -1,6 +1,7 @@
 package com.example.parqueoscallejeros.Inspectores.InspectoresLogin;
 
 import com.example.parqueoscallejeros.Inspectores.InspectoresMain.MainController;
+import com.example.parqueoscallejeros.Reportes.Session;
 import com.example.parqueoscallejeros.dataBase.DatabaseManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -44,6 +45,7 @@ public class Login {
                 System.out.println("Se ha iniciado la sesion");
 
                 int id = databaseManager.obtenerIdInspector(idUsuario.getText(), idContra.getText());
+                Session.getInstance().setUserId(id);
 
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/parqueoscallejeros/Inspectores/InspectoresMain/MainInspectores.fxml"));
                 Parent root = loader.load();
