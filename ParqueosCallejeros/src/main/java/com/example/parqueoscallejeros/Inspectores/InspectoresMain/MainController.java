@@ -49,6 +49,15 @@ public class MainController {
         this.userPin = userPin;
     }
 
+    public void switchReportes(ActionEvent event) throws IOException { // CAMBIAR A REPORTES
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/parqueoscallejeros/Inspectores/InspectoresMain/InspectorReport.fxml"));
+        Parent root = loader.load();
+        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
+
     public void sendData(ActionEvent event) throws IOException, MessagingException {
         DatabaseManager databaseManager = new DatabaseManager();
         String numParqueoText = numParqueo.getText();
