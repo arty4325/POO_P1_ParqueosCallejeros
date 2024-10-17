@@ -18,16 +18,13 @@ public class generadorPdf {
     private DatePicker fechaFinPicker;
 
     @FXML
-    public void multasPdf(ActionEvent actionEvent) throws DocumentException, FileNotFoundException {
-        LocalDate fechaInicio = fechaInicioPicker.getValue(); // Este es LocalDate
-        LocalDate fechaFin = fechaFinPicker.getValue(); // Este es LocalDate
+    private LocalDateTime[] obtenerRangoDeFechas() {
+        LocalDate fechaInicio = fechaInicioPicker.getValue(); // Obtener fecha de inicio
+        LocalDate fechaFin = fechaFinPicker.getValue(); // Obtener fecha de fin
 
         if (fechaInicio == null || fechaFin == null) {
-            // Manejo de error: podrías mostrar un mensaje al usuario
+            // Manejo de error: lanzar excepción o mostrar mensaje de error
             System.out.println("Fechas no seleccionadas.");
-            return;
-        }
-        if (fechaInicio == null || fechaFin == null) {
             throw new IllegalArgumentException("Las fechas no pueden ser nulas.");
         }
 
@@ -35,74 +32,169 @@ public class generadorPdf {
         LocalDateTime fechaInicioLDT = LocalDateTime.of(fechaInicio, LocalTime.MIN); // 00:00:00
         LocalDateTime fechaFinLDT = LocalDateTime.of(fechaFin, LocalTime.MAX); // 23:59:59.999999999
 
-
+        return new LocalDateTime[] {fechaInicioLDT, fechaFinLDT}; // Retornar el rango de fechas
+    }
+    public void multasUserPdf() throws FileNotFoundException, DocumentException {
+        int userId = Session.getInstance().getUserId();
+        LocalDateTime fechaInicioLDT = LocalDateTime.now().minusYears(10); // Desde hace 10 años
+        LocalDateTime fechaFinLDT = LocalDateTime.now(); // Hasta hoy
         Reportes reporte = new Reportes();
         reporte.crearDocumento("HistorialMultas");
         reporte.abrirDocumento();
         reporte.agregarTitulo("REPORTE DE DINERO GANADO POR MULTAS");
         reporte.agregarSaltosDeLinea();
-        reporte.agregarTexto("Reporte actual de multas " + fechaInicio +" "+ fechaFin);
+        reporte.agregarTexto("Reporte actual de multas " + fechaInicioLDT +" "+ fechaFinLDT);
         reporte.agregarSaltosDeLinea();
-        reporte.agregarTablaMultas(fechaInicioLDT, fechaFinLDT);
+        reporte.agregarTablaMultas(fechaInicioLDT, fechaFinLDT, userId);
         reporte.cerrarDocumento();
         System.out.println("Reporte finalizado.");
+    }
+    public void multasPdf(ActionEvent actionEvent) throws DocumentException, FileNotFoundException {
+        try {
+            // Llamar al método que obtiene el rango de fechas
+            LocalDateTime[] rangoDeFechas = obtenerRangoDeFechas();
+            LocalDateTime fechaInicioLDT = rangoDeFechas[0];
+            LocalDateTime fechaFinLDT = rangoDeFechas[1];
+
+            Reportes reporte = new Reportes();
+            reporte.crearDocumento("HistorialMultas");
+            reporte.abrirDocumento();
+            reporte.agregarTitulo("REPORTE DE DINERO GANADO POR MULTAS");
+            reporte.agregarSaltosDeLinea();
+            reporte.agregarTexto("Reporte actual de multas " + fechaInicioLDT +" "+ fechaFinLDT);
+            reporte.agregarSaltosDeLinea();
+            reporte.agregarTablaMultas(fechaInicioLDT, fechaFinLDT, 0);
+            reporte.cerrarDocumento();
+            System.out.println("Reporte finalizado.");
+        } catch (IllegalArgumentException e) {
+            // Manejo de excepción si las fechas no fueron seleccionadas
+            System.out.println(e.getMessage());
+        }
     }
     public void dineroMultasPdf(ActionEvent actionEvent) throws DocumentException, FileNotFoundException {
-        LocalDate fechaInicio = fechaInicioPicker.getValue(); // Este es LocalDate
-        LocalDate fechaFin = fechaFinPicker.getValue(); // Este es LocalDate
-
-        if (fechaInicio == null || fechaFin == null) {
-            // Manejo de error: podrías mostrar un mensaje al usuario
-            System.out.println("Fechas no seleccionadas.");
-            return;
+        try {
+            // Llamar al método que obtiene el rango de fechas
+            LocalDateTime[] rangoDeFechas = obtenerRangoDeFechas();
+            LocalDateTime fechaInicioLDT = rangoDeFechas[0];
+            LocalDateTime fechaFinLDT = rangoDeFechas[1];
+            Reportes reporte = new Reportes();
+            reporte.crearDocumento("DineroMultas");
+            reporte.abrirDocumento();
+            reporte.agregarTitulo("REPORTE DE MULTAS");
+            reporte.agregarSaltosDeLinea();
+            reporte.agregarTexto("Reporte actual de multas " + fechaInicioLDT +" "+ fechaFinLDT);
+            reporte.agregarSaltosDeLinea();
+            reporte.agregarTablaDineroMultas(fechaInicioLDT, fechaFinLDT);
+            reporte.cerrarDocumento();
+            System.out.println("Reporte finalizado.");
+        } catch (IllegalArgumentException e) {
+            // Manejo de excepción si las fechas no fueron seleccionadas
+            System.out.println(e.getMessage());
         }
-        if (fechaInicio == null || fechaFin == null) {
-            throw new IllegalArgumentException("Las fechas no pueden ser nulas.");
-        }
-
-        // Crear LocalDateTime para el inicio y el fin del rango
-        LocalDateTime fechaInicioLDT = LocalDateTime.of(fechaInicio, LocalTime.MIN); // 00:00:00
-        LocalDateTime fechaFinLDT = LocalDateTime.of(fechaFin, LocalTime.MAX); // 23:59:59.999999999
-
-
-        Reportes reporte = new Reportes();
-        reporte.crearDocumento("DineroMultas");
-        reporte.abrirDocumento();
-        reporte.agregarTitulo("REPORTE DE MULTAS");
-        reporte.agregarSaltosDeLinea();
-        reporte.agregarTexto("Reporte actual de multas " + fechaInicio +" "+ fechaFin);
-        reporte.agregarSaltosDeLinea();
-        reporte.agregarTablaDineroMultas(fechaInicioLDT, fechaFinLDT);
-        reporte.cerrarDocumento();
-        System.out.println("Reporte finalizado.");
     }
-    public void historialUsoPdf(ActionEvent actionEvent) throws DocumentException, FileNotFoundException {
-        LocalDate fechaInicio = fechaInicioPicker.getValue(); // Este es LocalDate
-        LocalDate fechaFin = fechaFinPicker.getValue(); // Este es LocalDate
-
-        if (fechaInicio == null || fechaFin == null) {
-            // Manejo de error: podrías mostrar un mensaje al usuario
-            System.out.println("Fechas no seleccionadas.");
-            return;
-        }
-        if (fechaInicio == null || fechaFin == null) {
-            throw new IllegalArgumentException("Las fechas no pueden ser nulas.");
-        }
-
-        // Crear LocalDateTime para el inicio y el fin del rango
-        LocalDateTime fechaInicioLDT = LocalDateTime.of(fechaInicio, LocalTime.MIN); // 00:00:00
-        LocalDateTime fechaFinLDT = LocalDateTime.of(fechaFin, LocalTime.MAX); // 23:59:59.999999999
-
-
+    public void historialUsoUserPdf() throws DocumentException, FileNotFoundException {
+        int userId = Session.getInstance().getUserId();
+        LocalDateTime fechaInicioLDT = LocalDateTime.now().minusYears(10); // Desde hace 10 años
+        LocalDateTime fechaFinLDT = LocalDateTime.now(); // Hasta hoy
         Reportes reporte = new Reportes();
         reporte.crearDocumento("HistorialUso");
         reporte.abrirDocumento();
         reporte.agregarTitulo("REPORTE DE USO");
         reporte.agregarSaltosDeLinea();
-        reporte.agregarTexto("Reporte actual de uso " + fechaInicio +" "+ fechaFin);
+        reporte.agregarTexto("Reporte actual de uso " + fechaInicioLDT +" "+ fechaFinLDT);
         reporte.agregarSaltosDeLinea();
-        reporte.agregarTablaHistorialUso(fechaInicioLDT, fechaFinLDT);
+        reporte.agregarTablaHistorialUso(fechaInicioLDT, fechaFinLDT, userId);
         reporte.cerrarDocumento();
         System.out.println("Reporte finalizado.");
     }
+    public void historialUsoPdf(ActionEvent actionEvent) throws DocumentException, FileNotFoundException {
+        try {
+            // Llamar al método que obtiene el rango de fechas
+            LocalDateTime[] rangoDeFechas = obtenerRangoDeFechas();
+            LocalDateTime fechaInicioLDT = rangoDeFechas[0];
+            LocalDateTime fechaFinLDT = rangoDeFechas[1];
+            Reportes reporte = new Reportes();
+            reporte.crearDocumento("HistorialUso");
+            reporte.abrirDocumento();
+            reporte.agregarTitulo("REPORTE DE USO");
+            reporte.agregarSaltosDeLinea();
+            reporte.agregarTexto("Reporte actual de uso " + fechaInicioLDT +" "+ fechaFinLDT);
+            reporte.agregarSaltosDeLinea();
+            reporte.agregarTablaHistorialUso(fechaInicioLDT, fechaFinLDT, 0);
+            reporte.cerrarDocumento();
+            System.out.println("Reporte finalizado.");
+        } catch (IllegalArgumentException e) {
+            // Manejo de excepción si las fechas no fueron seleccionadas
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void IngresoDineroPdf(ActionEvent actionEvent) throws DocumentException, FileNotFoundException {
+        try {
+            // Llamar al método que obtiene el rango de fechas
+            LocalDateTime[] rangoDeFechas = obtenerRangoDeFechas();
+            LocalDateTime fechaInicioLDT = rangoDeFechas[0];
+            LocalDateTime fechaFinLDT = rangoDeFechas[1];
+            Reportes reporte = new Reportes();
+            reporte.crearDocumento("Ingreso de Dinero");
+            reporte.abrirDocumento();
+            reporte.agregarTitulo("REPORTE DE DINERO");
+            reporte.agregarSaltosDeLinea();
+            reporte.agregarTexto("Reporte actual de uso " + fechaInicioLDT +" "+ fechaFinLDT);
+            reporte.agregarSaltosDeLinea();
+            reporte.agregarTablaIngresoDinero(fechaInicioLDT, fechaFinLDT, true);
+            reporte.cerrarDocumento();
+            System.out.println("Reporte finalizado.");
+        } catch (IllegalArgumentException e) {
+            // Manejo de excepción si las fechas no fueron seleccionadas
+            System.out.println(e.getMessage());
+        }
+    }
+    public void EspacioParqueoTodos() throws DocumentException, FileNotFoundException {
+        int estado=0;
+        Reportes reporte = new Reportes();
+        reporte.crearDocumento("Espacios Parqueo");
+        reporte.abrirDocumento();
+        reporte.agregarTitulo("REPORTE DE ESPACIOS");
+        reporte.agregarSaltosDeLinea();
+        reporte.agregarSaltosDeLinea();
+        LocalDateTime fechaInicioLDT = LocalDateTime.now().minusYears(10); // Desde hace 10 años
+        LocalDateTime fechaFinLDT = LocalDateTime.now(); // Hasta hoy
+        reporte.agregarTitulo("REPORTE DE ESPACIOS OCUPADOS");
+        reporte.agregarTablaIngresoDinero(fechaInicioLDT, fechaFinLDT, false);
+        reporte.agregarTitulo("REPORTE DE ESPACIOS VACIOS");
+        reporte.agregarTablaEspaciosParqueo(estado);
+        reporte.cerrarDocumento();
+        System.out.println("Reporte finalizado.");
+
+    }
+    // Método para espacios ocupados
+    public void EspacioParqueoOcupados() throws DocumentException, FileNotFoundException {
+        int estado=0;
+        Reportes reporte = new Reportes();
+        reporte.crearDocumento("Espacios Parqueo");
+        reporte.abrirDocumento();
+        reporte.agregarTitulo("REPORTE DE ESPACIOS OCUPADOS");
+        reporte.agregarSaltosDeLinea();
+        reporte.agregarSaltosDeLinea();
+        LocalDateTime fechaInicioLDT = LocalDateTime.now().minusYears(10); // Desde hace 10 años
+        LocalDateTime fechaFinLDT = LocalDateTime.now(); // Hasta hoy
+        reporte.agregarTablaIngresoDinero(fechaInicioLDT, fechaFinLDT, false);
+        reporte.cerrarDocumento();
+        System.out.println("Reporte finalizado.");
+    }
+    // Método para espacios vacíos
+    public void EspacioParqueoVacios() throws DocumentException, FileNotFoundException {
+        int estado=0;
+        Reportes reporte = new Reportes();
+        reporte.crearDocumento("Espacios Parqueo");
+        reporte.abrirDocumento();
+        reporte.agregarTitulo("REPORTE DE ESPACIOS VACIOS");
+        reporte.agregarSaltosDeLinea();
+        reporte.agregarSaltosDeLinea();
+        reporte.agregarTablaEspaciosParqueo(estado);
+        reporte.cerrarDocumento();
+        System.out.println("Reporte finalizado.");
+    }
+
 }
