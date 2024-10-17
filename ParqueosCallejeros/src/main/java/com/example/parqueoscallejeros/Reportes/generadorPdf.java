@@ -76,4 +76,33 @@ public class generadorPdf {
         reporte.cerrarDocumento();
         System.out.println("Reporte finalizado.");
     }
+    public void historialUsoPdf(ActionEvent actionEvent) throws DocumentException, FileNotFoundException {
+        LocalDate fechaInicio = fechaInicioPicker.getValue(); // Este es LocalDate
+        LocalDate fechaFin = fechaFinPicker.getValue(); // Este es LocalDate
+
+        if (fechaInicio == null || fechaFin == null) {
+            // Manejo de error: podrías mostrar un mensaje al usuario
+            System.out.println("Fechas no seleccionadas.");
+            return;
+        }
+        if (fechaInicio == null || fechaFin == null) {
+            throw new IllegalArgumentException("Las fechas no pueden ser nulas.");
+        }
+
+        // Crear LocalDateTime para el inicio y el fin del rango
+        LocalDateTime fechaInicioLDT = LocalDateTime.of(fechaInicio, LocalTime.MIN); // 00:00:00
+        LocalDateTime fechaFinLDT = LocalDateTime.of(fechaFin, LocalTime.MAX); // 23:59:59.999999999
+
+
+        Reportes reporte = new Reportes();
+        reporte.crearDocumento("HistorialUso");
+        reporte.abrirDocumento();
+        reporte.agregarTitulo("REPORTE DE USO");
+        reporte.agregarSaltosDeLinea();
+        reporte.agregarTexto("Reporte actual de uso " + fechaInicio +" "+ fechaFin);
+        reporte.agregarSaltosDeLinea();
+        reporte.agregarTablaHistorialUso(fechaInicioLDT, fechaFinLDT);
+        reporte.cerrarDocumento();
+        System.out.println("Reporte finalizado.");
+    }
 }
