@@ -1,6 +1,7 @@
 package com.example.parqueoscallejeros.User.UserLogin;
 // cambio
 import com.example.parqueoscallejeros.EnvioCorreos;
+import com.example.parqueoscallejeros.Reportes.Session;
 import com.example.parqueoscallejeros.User.UserMain.MainController;
 import com.example.parqueoscallejeros.dataBase.DatabaseManager;
 import com.sun.source.doctree.SystemPropertyTree;
@@ -144,6 +145,7 @@ public class RegisterAndLogin {
         DatabaseManager databaseManager = new DatabaseManager();
         if(databaseManager.iniciarSesion(inicUsuario.getText(), inicContra.getText())){
             int id = databaseManager.obtenerIdUsuario(inicUsuario.getText(), inicContra.getText());
+            Session.getInstance().setUserId(id);
             //String idString = Integer.toString(id);
             //System.out.println("Se ha iniciado correctamente" + idString);
 
