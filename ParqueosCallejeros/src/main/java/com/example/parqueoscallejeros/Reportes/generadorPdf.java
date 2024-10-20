@@ -4,6 +4,7 @@ import com.itextpdf.text.DocumentException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.TextField;
 
 import java.io.FileNotFoundException;
 import java.time.LocalDate;
@@ -16,6 +17,12 @@ public class generadorPdf {
 
     @FXML
     private DatePicker fechaFinPicker;
+
+    @FXML
+    private TextField regInicioList;
+
+    @FXML
+    private TextField regFinList;
 
     @FXML
     private LocalDateTime[] obtenerRangoDeFechas() {
@@ -34,6 +41,27 @@ public class generadorPdf {
 
         return new LocalDateTime[] {fechaInicioLDT, fechaFinLDT}; // Retornar el rango de fechas
     }
+    @FXML
+    private int[] obtenerRangoDeParqueos() {
+        String regInicio = regInicioList.getText();
+        String regFin = regFinList.getText();
+        if (regInicio == null || regFin == null) {
+            System.out.println("Rango no seleccionado.");
+            return null;
+        }
+        int inicioList = 0;
+        int finList = 0;
+        try {
+            inicioList = Integer.parseInt(regInicio);
+            finList = Integer.parseInt(regFin);
+        } catch (NumberFormatException e) {
+            System.out.println("Ingrese unicamente numeros");
+            return null;
+        }
+        return new int[] {inicioList, finList};
+
+    }
+
     public void multasUserPdf() throws FileNotFoundException, DocumentException {
         int userId = Session.getInstance().getUserId();
         LocalDateTime fechaInicioLDT = LocalDateTime.now().minusYears(10); // Desde hace 10 años
@@ -195,6 +223,55 @@ public class generadorPdf {
         reporte.agregarTablaEspaciosParqueo(estado);
         reporte.cerrarDocumento();
         System.out.println("Reporte finalizado.");
+    }
+    public void reporteDetalladoPdf(ActionEvent actionEvent) throws DocumentException, FileNotFoundException {
+        try {
+            // Llamar al método que obtiene el rango de fechas
+            LocalDateTime[] rangoDeFechas = obtenerRangoDeFechas();
+            LocalDateTime fechaInicioLDT = rangoDeFechas[0];
+            LocalDateTime fechaFinLDT = rangoDeFechas[1];
+            int[] rangoEspacios = obtenerRangoDeParqueos();
+            int inicioList = rangoEspacios[0];
+            int finList = rangoEspacios[1];
+            Reportes reporte = new Reportes();
+            reporte.crearDocumento("Estaditica Detallada");
+            reporte.abrirDocumento();
+            reporte.agregarTitulo("REPORTE DETALLADO");
+            reporte.agregarSaltosDeLinea();
+            reporte.agregarTexto("Reporte actual de uso " + fechaInicioLDT +" "+ fechaFinLDT);
+            reporte.agregarSaltosDeLinea();
+            reporte.agregarTablaEstDetallada(fechaInicioLDT, fechaFinLDT, inicioList, finList);
+            reporte.cerrarDocumento();
+            System.out.println("Reporte finalizado.");
+        } catch (IllegalArgumentException e) {
+            // Manejo de excepción si las fechas no fueron seleccionadas
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void reporteResumidoPdf(ActionEvent actionEvent) throws DocumentException, FileNotFoundException {
+        try {
+            // Llamar al método que obtiene el rango de fechas
+            LocalDateTime[] rangoDeFechas = obtenerRangoDeFechas();
+            LocalDateTime fechaInicioLDT = rangoDeFechas[0];
+            LocalDateTime fechaFinLDT = rangoDeFechas[1];
+            int[] rangoEspacios = obtenerRangoDeParqueos();
+            int inicioList = rangoEspacios[0];
+            int finList = rangoEspacios[1];
+            Reportes reporte = new Reportes();
+            reporte.crearDocumento("Estadistica resumida");
+            reporte.abrirDocumento();
+            reporte.agregarTitulo("REPORTE RESUMIDO");
+            reporte.agregarSaltosDeLinea();
+            reporte.agregarTexto("Reporte actual de uso " + fechaInicioLDT +" "+ fechaFinLDT);
+            reporte.agregarSaltosDeLinea();
+            reporte.agregarTablaEstResumida(fechaInicioLDT, fechaFinLDT, inicioList, finList);
+            reporte.cerrarDocumento();
+            System.out.println("Reporte finalizado.");
+        } catch (IllegalArgumentException e) {
+            // Manejo de excepción si las fechas no fueron seleccionadas
+            System.out.println(e.getMessage());
+        }
     }
 
 }
