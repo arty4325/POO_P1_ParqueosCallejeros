@@ -16,6 +16,7 @@ public class HistorialDeUso {
         this.idUsuario = idUsuario;
         this.idEspacio = idEspacio;
         this.costo = costo;
+        this.tiempoOcupado = tiempoOcupado;
         this.fechaUso = fechaUso;
     }
     public int getId() {
