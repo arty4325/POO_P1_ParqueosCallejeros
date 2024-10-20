@@ -11,12 +11,12 @@
       <Button layoutX="64.0" layoutY="111.0" mnemonicParsing="false" onAction="#dineroMultasPdf" prefHeight="26.0" prefWidth="134.0" text="Ingresos por multas" />
       <Button layoutX="64.0" layoutY="153.0" mnemonicParsing="false" onAction="#historialUsoPdf" prefHeight="26.0" prefWidth="134.0" text="Historial de uso" />
       <Button layoutX="64.0" layoutY="253.0" mnemonicParsing="false" onAction="#multasPdf" prefHeight="26.0" prefWidth="134.0" text="Historial de multas" />
-      <Button layoutX="64.0" layoutY="293.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="134.0" text="Historial del parqueo" />
-      <Button layoutX="64.0" layoutY="330.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="134.0" text="Estadistica resumida" />
-      <DatePicker fx:id="fechaInicioPicker" layoutX="384.0" layoutY="161.0" />
-      <DatePicker fx:id="fechaFinPicker" layoutX="384.0" layoutY="249.0" />
-      <Label layoutX="439.0" layoutY="125.0" text="Fecha Inicial" />
-      <Label layoutX="442.0" layoutY="216.0" text="Fecha Final" />
+      <Button layoutX="64.0" layoutY="293.0" mnemonicParsing="false" onAction="#reporteDetalladoPdf" prefHeight="26.0" prefWidth="134.0" text="Estadistica Detallada" />
+      <Button layoutX="64.0" layoutY="330.0" mnemonicParsing="false" onAction="#reporteResumidoPdf" prefHeight="26.0" prefWidth="134.0" text="Estadistica resumida" />
+      <DatePicker fx:id="fechaInicioPicker" layoutX="385.0" layoutY="114.0" />
+      <DatePicker fx:id="fechaFinPicker" layoutX="385.0" layoutY="202.0" />
+      <Label layoutX="440.0" layoutY="78.0" text="Fecha Inicial" />
+      <Label layoutX="443.0" layoutY="169.0" text="Fecha Final" />
       <Label layoutX="83.0" layoutY="210.0" text="Espacios de Parqueos" />
       <Button layoutX="220.0" layoutY="178.0" mnemonicParsing="false" onAction="#EspacioParqueoTodos" prefHeight="26.0" prefWidth="118.0" text="Todos los espacios" />
       <Button layoutX="220.0" layoutY="206.0" mnemonicParsing="false" onAction="#EspacioParqueoOcupados" text="Espacios Ocupados" />
@@ -29,5 +29,9 @@
             <Font name="Arial Black" size="23.0" />
          </font>
       </Label>
+      <TextField  fx:id="regInicioList" layoutX="398.0" layoutY="267.0" />
+      <TextField  fx:id="regFinList" layoutX="398.0" layoutY="317.0" />
+      <Label layoutX="437.0" layoutY="239.0" text="Inicio de lista" />
+      <Label layoutX="443.0" layoutY="297.0" text="Fin de lista" />
    </children>
 </AnchorPane>
