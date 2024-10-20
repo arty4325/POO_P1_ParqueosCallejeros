@@ -10,6 +10,7 @@ import java.io.FileOutputStream;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
 import java.util.Date;
@@ -279,6 +280,125 @@ public class Reportes {
             e.printStackTrace();
         }
     }
+
+    public void agregarTablaEstDetallada(LocalDateTime fechaInicio, LocalDateTime fechaFin, int inicioList, int finList) {
+        try {
+            PdfPTable tabla = new PdfPTable(4); // 4 columnas: Numero de Espacio, Fecha, Horas Ocupadas, Horas Vacias
+            tabla.addCell("Numero de Espacio");
+            tabla.addCell("Fecha");
+            tabla.addCell("Horas Ocupadas");
+            tabla.addCell("Horas Vacias");
+            // Obtener los datos
+            EspaciosParqueoDAO espaciosParqueoDAO = new EspaciosParqueoDAO();
+            List<EspaciosParqueo> espaciosParqueos = espaciosParqueoDAO.mostrarEspaciosParqueo(2);
+            HistorialDeUsoDAO historialDeUsoDAO = new HistorialDeUsoDAO();
+            List<HistorialDeUso> historialDeUsos = historialDeUsoDAO.mostrarHistorialUso(fechaInicio, fechaFin);
+            // Verifica que la lista de espacios no sea nula
+            if (espaciosParqueos != null && !espaciosParqueos.isEmpty()) {
+                for (EspaciosParqueo espaciosParqueo : espaciosParqueos) {
+                    double horasAcumuladas = 0;
+                    LocalDate ultimaFecha = null; // Reiniciar `ultimaFecha` para cada espacio
+                    for (HistorialDeUso historialDeUso : historialDeUsos) {
+                        // Comprobar si el espacio del historial coincide con el espacio actual
+                        if (espaciosParqueo.getNumeroEspacio() == historialDeUso.getIdEspacio()) {
+                            // Convertir Date a LocalDateTime para una comparación consistente
+                            LocalDateTime fechaUso = historialDeUso.getFechaUso().toInstant()
+                                    .atZone(ZoneId.systemDefault())
+                                    .toLocalDateTime();
+                            // Comparar fechas dentro del rango usando LocalDateTime
+                            if (!fechaUso.isBefore(fechaInicio) && !fechaUso.isAfter(fechaFin)) {
+                                // Si es la misma fecha que la última, acumular horas
+                                if (ultimaFecha != null && fechaUso.toLocalDate().equals(ultimaFecha)) {
+                                    horasAcumuladas += historialDeUso.getTiempoOcupado();
+                                } else {
+                                    // Si es una nueva fecha, insertar la información acumulada
+                                    if (ultimaFecha != null) {
+                                        // Añadir la fila acumulada para la última fecha
+                                        tabla.addCell(String.valueOf(espaciosParqueo.getNumeroEspacio()));
+                                        tabla.addCell(ultimaFecha.toString()); // Muestra la última fecha acumulada
+                                        tabla.addCell(String.valueOf(horasAcumuladas / 60)); // Horas ocupadas
+                                        tabla.addCell(String.valueOf(24 - (horasAcumuladas / 60))); // Horas vacías
+                                    }
+                                    // Reiniciar la acumulación para la nueva fecha
+                                    ultimaFecha = fechaUso.toLocalDate();
+                                    horasAcumuladas = historialDeUso.getTiempoOcupado();
+                                }
+                            }
+                        }
+                    }
+                    // Añadir la última fila para el espacio, si existe
+                    if (ultimaFecha != null) {
+                        tabla.addCell(String.valueOf(espaciosParqueo.getNumeroEspacio()));
+                        tabla.addCell(ultimaFecha.toString());
+                        tabla.addCell(String.valueOf(horasAcumuladas / 60)); // Horas ocupadas
+                        tabla.addCell(String.valueOf(24 - (horasAcumuladas / 60))); // Horas vacías
+                    }
+                }
+            } else {
+                // Si no hay espacios, agregar un mensaje
+                tabla.addCell("No se encontraron parqueos.");
+                for (int i = 0; i < 3; i++) {
+                    tabla.addCell(""); // Rellenar las otras columnas vacías
+                }
+            }
+
+            // Agregar la tabla al documento
+            documento.add(tabla);
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void agregarTablaEstResumida(LocalDateTime fechaInicio, LocalDateTime fechaFin, int inicioList, int finList) {
+        try {
+            PdfPTable tabla = new PdfPTable(4); // 4 columnas: Fecha, Numero de Espacio, Horas Ocupadas, Horas Vacias
+            tabla.addCell("Fecha");
+            tabla.addCell("Numero de Espacio");
+            tabla.addCell("Horas Ocupadas");
+            tabla.addCell("Horas Vacias");
+            // Obtener los datos
+            EspaciosParqueoDAO espaciosParqueoDAO = new EspaciosParqueoDAO();
+            List<EspaciosParqueo> espaciosParqueos = espaciosParqueoDAO.mostrarEspaciosParqueo(2);
+            HistorialDeUsoDAO historialDeUsoDAO = new HistorialDeUsoDAO();
+            List<HistorialDeUso> historialDeUsos = historialDeUsoDAO.mostrarHistorialUso(fechaInicio, fechaFin);
+            // Iterar sobre cada día entre fechaInicio y fechaFin
+            LocalDateTime currentDay = fechaInicio;
+            while (!currentDay.isAfter(fechaFin)) {
+                // Convertir currentDay a Date para facilitar las comparaciones
+                LocalDate currentDate = currentDay.toLocalDate();
+                // Recorrer los espacios de parqueo
+                for (EspaciosParqueo espaciosParqueo : espaciosParqueos) {
+                    double horasAcumuladas = 0;
+                    // Recorrer el historial de uso para verificar el uso en la fecha actual
+                    for (HistorialDeUso historialDeUso : historialDeUsos) {
+                        // Comprobar si el espacio del historial coincide con el espacio actual
+                        if (espaciosParqueo.getNumeroEspacio() == historialDeUso.getIdEspacio()) {
+                            // Convertir `Date` a `LocalDate` para la comparación
+                            LocalDate fechaUso = historialDeUso.getFechaUso().toInstant()
+                                    .atZone(ZoneId.systemDefault())
+                                    .toLocalDate();
+                            // Si la fecha coincide, acumular las horas ocupadas
+                            if (fechaUso.equals(currentDate)) {
+                                horasAcumuladas += historialDeUso.getTiempoOcupado();
+                            }
+                        }
+                    }
+                    // Añadir la fila con los datos del día actual y espacio
+                    tabla.addCell(currentDate.toString()); // Fecha
+                    tabla.addCell(String.valueOf(espaciosParqueo.getNumeroEspacio())); // Numero de Espacio
+                    tabla.addCell(String.valueOf(horasAcumuladas / 60)); // Horas ocupadas
+                    tabla.addCell(String.valueOf(24 - (horasAcumuladas / 60))); // Horas vacías
+                }
+                // Avanzar al siguiente día
+                currentDay = currentDay.plusDays(1);
+            }
+            // Agregar la tabla al documento
+            documento.add(tabla);
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 
 
