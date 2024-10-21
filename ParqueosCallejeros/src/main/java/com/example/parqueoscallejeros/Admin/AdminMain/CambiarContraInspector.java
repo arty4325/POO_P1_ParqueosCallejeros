@@ -4,6 +4,8 @@ import com.example.parqueoscallejeros.EnvioCorreos;
 import com.example.parqueoscallejeros.dataBase.DatabaseManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -50,6 +52,17 @@ public class CambiarContraInspector {
         nuevoPin.setDisable(true);
     }
 
+    public void switchToAdmin(ActionEvent event) throws IOException { // REGISTRO
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/parqueoscallejeros/Admin/AdminMainFunctions/AdminMain.fxml"));
+        Parent root = loader.load();
+        MainController controller = loader.getController();
+        controller.setUserData(uniqueId, userId, userPin);
+        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
+
     public void enviarInformacion(ActionEvent event) throws IOException, MessagingException { // REGISTRO
         DatabaseManager databaseManager = new DatabaseManager();
         if(databaseManager.existeInspector(inspectorCargado.getText())) {
@@ -91,6 +104,7 @@ public class CambiarContraInspector {
             nuevoPin.setDisable(false);
 
 
+
         } else {
             infoInspector.setText("Inspector No Existe");
         }
@@ -125,6 +139,15 @@ public class CambiarContraInspector {
                     EnvioCorreos envioCorreos = new EnvioCorreos();
                     envioCorreos.createEmail(correoUsuario, "Cambio de contraseña Inspector", message);
                     envioCorreos.sendEmail();
+
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/parqueoscallejeros/Admin/AdminMainFunctions/AdminMain.fxml"));
+                    Parent root = loader.load();
+                    MainController controller = loader.getController();
+                    controller.setUserData(uniqueId, userId, userPin);
+                    stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+                    scene = new Scene(root);
+                    stage.setScene(scene);
+                    stage.show();
                 } else {
                     infoSend.setText("El codigo de validacion ingresado es incorrecto");
                 }

@@ -20,6 +20,7 @@
       <Text layoutX="182.0" layoutY="205.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Codigo Cambio" />
       <Text layoutX="196.0" layoutY="253.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Nuevo Pin" />
       <Button layoutX="449.0" layoutY="316.0" mnemonicParsing="false" onAction="#handleSetNewPin" text="Enviar Datos" />
+      <Button layoutX="490.0" layoutY="352.0" mnemonicParsing="false" onAction="#switchToMain" text="Volver" />
    </children>
 
 </AnchorPane>

@@ -20,6 +20,7 @@
       <Text layoutX="79.0" layoutY="205.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Marca (Opcional)" />
       <Text layoutX="75.0" layoutY="256.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Modelo (Opcional)" />
       <Button layoutX="231.0" layoutY="297.0" mnemonicParsing="false" onAction="#registrarCarros" text="Enviar Informacion" />
+      <Button layoutX="509.0" layoutY="341.0" mnemonicParsing="false" onAction="#switchToMain" text="Volver" />
    </children>
 
 </AnchorPane>

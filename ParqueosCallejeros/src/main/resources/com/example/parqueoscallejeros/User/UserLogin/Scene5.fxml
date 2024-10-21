@@ -17,6 +17,7 @@
       <TextField fx:id="usuarioCambio" layoutX="276.0" layoutY="151.0" />
       <Button layoutX="338.0" layoutY="254.0" mnemonicParsing="false" onAction="#handleChangeData" text="Send Usuario" />
       <Button layoutX="272.0" layoutY="293.0" mnemonicParsing="false" onAction="#switchToScene6" text="Ir a ventana de verificacion" />
+      <Button layoutX="536.0" layoutY="361.0" mnemonicParsing="false" onAction="#switchToScene1" text="Volver" />
    </children>
 
 </AnchorPane>

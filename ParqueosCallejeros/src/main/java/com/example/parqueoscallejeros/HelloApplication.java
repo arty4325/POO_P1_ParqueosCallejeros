@@ -15,7 +15,7 @@ public class HelloApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         primaryStage = stage;
-        showInspectores(); // Iniciar con la primera escena
+        showAdministradores(); // Iniciar con la primera escena
     }
 
     // Método para mostrar la primera escena
