@@ -1,0 +1,10 @@
+module:com.example.parqueoscallejeros
+com.example.parqueoscallejeros
+com.example.parqueoscallejeros.Admin.AdminLogin
+com.example.parqueoscallejeros.Admin.AdminMain
+com.example.parqueoscallejeros.dataBase
+com.example.parqueoscallejeros.Inspectores.InspectoresLogin
+com.example.parqueoscallejeros.Inspectores.InspectoresMain
+com.example.parqueoscallejeros.Reportes
+com.example.parqueoscallejeros.User.UserLogin
+com.example.parqueoscallejeros.User.UserMain
