@@ -11,6 +11,16 @@ public class Reserva {
     private int costo;
     private Date fecha;
 
+    /**
+     * constructor de la clase reserva
+     * @param idReserva
+     * @param idUsuario
+     * @param idEspacio
+     * @param Placa
+     * @param tiempoReserva
+     * @param costo
+     * @param fecha
+     */
     public Reserva(int idReserva, int idUsuario, int idEspacio, String Placa, int tiempoReserva, int costo, Date fecha) {
         this.idReserva = idReserva;
         this.idUsuario = idUsuario;

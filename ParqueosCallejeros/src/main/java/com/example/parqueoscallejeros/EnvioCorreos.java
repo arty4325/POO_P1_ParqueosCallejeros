@@ -12,6 +12,8 @@ import java.util.Properties;
 
 public class EnvioCorreos {
 
+    // Esto se hizo con un gmail
+    // usuario y contraseña de ese correo
     private static String emailFrom = "parqueoscallejeros@gmail.com";
     private static String passwordFrom = "njvwhnohfgogersi";
     private String emailTo;
@@ -30,12 +32,19 @@ public class EnvioCorreos {
     private void initComponents() {
     }
 
+    /**
+     * Se crea un email
+     * @param _emailTo para quien es el email
+     * @param _subject Cual es el tieulo
+     * @param _content cual es el contenido
+     * @throws MessagingException
+     */
     public void createEmail(String _emailTo, String _subject, String _content) throws MessagingException {
         emailTo = _emailTo; // Tengo que poner la informacion, Paso como parametro?
         subject = _subject;
         content = _content;
 
-        // Protocolo
+        // Se hace un protocolo que permite mandar emails
         mProperties.put("mail.smtp.host", "smtp.gmail.com");
         mProperties.put("mail.stmp.ssl.trust", "smtp.gmail.com");
         mProperties.setProperty("mail.smtp.starttls.enable", "true");
@@ -54,6 +63,10 @@ public class EnvioCorreos {
 
     }
 
+    /**
+     * Funcion que toma la accion de mandar el email
+     * @throws MessagingException
+     */
     public void sendEmail() throws MessagingException {
         Transport mTransport = mSession.getTransport("smtp");
         mTransport.connect(emailFrom, passwordFrom);

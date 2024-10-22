@@ -40,6 +40,12 @@ public class MainController {
     @FXML
     private Label feedbackData1;
 
+    /**
+     * Funcion que permite configurar la informacion del usuario segun lo que habia en otra ventana
+     * @param id
+     * @param userId
+     * @param userPin
+     */
     public void setUserData(int id, String userId, String userPin) {
         System.out.println(id);
         System.out.println(userId);
@@ -49,6 +55,7 @@ public class MainController {
         this.userPin = userPin;
     }
 
+    // Cambia a la ventana de reportes
     public void switchReportes(ActionEvent event) throws IOException { // CAMBIAR A REPORTES
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/parqueoscallejeros/Inspectores/InspectoresMain/InspectorReport.fxml"));
         Parent root = loader.load();
@@ -58,30 +65,28 @@ public class MainController {
         stage.show();
     }
 
+    // Envia la informacion del paruqeo que se esta verificando
     public void sendData(ActionEvent event) throws IOException, MessagingException {
         DatabaseManager databaseManager = new DatabaseManager();
         String numParqueoText = numParqueo.getText();
-        String idPlacaText = idPlaca.getText(); // Asegúrate de tener idPlaca definido correctamente
+        String idPlacaText = idPlaca.getText();
         Integer numParqueoInt = Integer.parseInt(numParqueoText);
 
         // Validar numParqueo
         if (!numParqueoText.matches("\\d{4}")) {
             feedbackData.setText("El número de parqueo debe contener exactamente 4 dígitos numéricos.");
-            // Aquí puedes mostrar un mensaje al usuario o lanzar una excepción
             return; // Salir del método si la validación falla
         }
 
         // Validar idPlaca
         if (!idPlacaText.matches("^[a-zA-Z0-9]{1,6}$")) {
             feedbackData.setText("El ID de la placa debe contener entre 1 y 6 dígitos numéricos.");
-            // Aquí puedes mostrar un mensaje al usuario o lanzar una excepción
             return; // Salir del método si la validación falla
         }
 
         // Aquí continúa la lógica para enviar los datos si ambas validaciones son exitosas
 
-        // YO QUIERO VER SI ESTA EN LA DB
-        if(databaseManager.verificarConfiguracionParqueoExistente(numParqueoInt)) {
+        if(databaseManager.verificarConfiguracionParqueoExistente(numParqueoInt)) { // Se verifica si el parqueo ingresado esta en la db
             if (databaseManager.existeReservaPorEspacioYPlaca(numParqueoInt, idPlacaText)) {
                 System.out.println("SI ESTA PARQUEADO ");
                 String horaParqueo = databaseManager.obtenerFechaReserva(numParqueoInt);
@@ -105,7 +110,6 @@ public class MainController {
                 System.out.println(tiempoSobrante);
                 if (tiempoSobrante > 0) {
                     feedbackData1.setText("El carro esta parqueado");
-                    // Solo aqui me quedo tranquilo
                 } else {
                     feedbackData1.setText("El carro no está parqueado");
                     Integer costo;
@@ -127,14 +131,14 @@ public class MainController {
                                         "<p>Muchas gracias por confiar en nosotros.</p>" +
                                         "<p>Atentamente,<br>Parqueos Callejeros S.A</p>";
 
-                        EnvioCorreos envioCorreos = new EnvioCorreos();
+                        EnvioCorreos envioCorreos = new EnvioCorreos(); // Se envia un correo con la informacion
                         envioCorreos.createEmail(correo, "Generacion de Multa", message);
                         envioCorreos.sendEmail();
                         // Llama al método insertarMulta pasando el LocalDate como último parámetro
                     }
                     databaseManager.insertarMulta(uniqueId, idPlacaText, costo, fechaFormateada);
                 }
-            } else {
+            } else { // Se tiene que revisar si hay informacion del carro en la db
                 feedbackData1.setText("El carro no está parqueado");
                 Integer costo;
                 costo = databaseManager.obtenerCostoMulta(numParqueoInt);
@@ -159,7 +163,7 @@ public class MainController {
 
                     EnvioCorreos envioCorreos = new EnvioCorreos();
                     envioCorreos.createEmail(correo, "Generacion de Multa", message);
-                    envioCorreos.sendEmail();
+                    envioCorreos.sendEmail(); // Se envia un correocon la info
                 }
                 databaseManager.insertarMulta(uniqueId, idPlacaText, costo, fechaFormateada);
             }

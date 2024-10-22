@@ -79,14 +79,6 @@ public class ConfigParqueo {
             startMinute.getItems().add(i);
             endMinute.getItems().add(i);
         }
-
-        // Opcional: establecer valores predeterminados
-        /**
-        startHour.setValue(8); // Hora predeterminada de inicio
-        startMinute.setValue(0);
-        endHour.setValue(17); // Hora predeterminada de fin
-        endMinute.setValue(0);
-         **/
     }
 
 
@@ -101,7 +93,12 @@ public class ConfigParqueo {
         System.out.println("PIN usuario: " + userPin);
     }
 
-    public void switchToAdmin(ActionEvent event) throws IOException { // REGISTRO
+    /**
+     * Permite al usuario cambiar a la ventana de administraodor
+     * @param event
+     * @throws IOException
+     */
+    public void switchToAdmin(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/parqueoscallejeros/Admin/AdminMainFunctions/AdminMain.fxml"));
         Parent root = loader.load();
         MainController controller = loader.getController();
@@ -113,9 +110,15 @@ public class ConfigParqueo {
     }
 
 
-    public void handleInformation(ActionEvent event) throws IOException { // REGISTRO
+    /**
+     * Maneja la informacion
+     * @param event
+     * @throws IOException
+     */
+    public void handleInformation(ActionEvent event) throws IOException {
         if(validacionDatos()){
-            DatabaseManager databaseManager = new DatabaseManager();
+            DatabaseManager databaseManager = new DatabaseManager(); // se instncia un manejador de base de datos
+            // Se obtiene la informacion del espacio
             int inicioEspacio = Integer.parseInt(espaciosInicio.getText());
             int finEspacio = Integer.parseInt(espaciosFin.getText());
             Integer startH = startHour.getValue();
@@ -129,24 +132,23 @@ public class ConfigParqueo {
 
             // Formatear las horas y minutos a String en formato HH:mm
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
-            String startTimeString = startTime.format(formatter); // "HH:mm"
-            String endTimeString = endTime.format(formatter);     // "HH:mm"
+            String startTimeString = startTime.format(formatter);
+            String endTimeString = endTime.format(formatter);
 
 
 
             boolean flag = true;
-          for(int i = inicioEspacio; i <= finEspacio; i++){
-              //System.out.println(databaseManager.verificarConfiguracionParqueoExistente(i));
-              if(databaseManager.verificarConfiguracionParqueoExistente(i)){
+          for(int i = inicioEspacio; i <= finEspacio; i++){ // Se recorren todos los espacios
+              if(databaseManager.verificarConfiguracionParqueoExistente(i)){ // Se verifica la configuracion del parqueo
                   flag = false;
               }
           }
-          if(flag){
-              for(int i = inicioEspacio; i <= finEspacio; i++){
+          if(flag){ // Si la flag siempre se mantiene true
+              for(int i = inicioEspacio; i <= finEspacio; i++){ // Se itera sobre los espacios
                   databaseManager.insertarConfiguracionParqueo(i, startTimeString, endTimeString, Integer.parseInt(precioHora.getText()),
                           Integer.parseInt(minCompra.getText()),
                           Integer.parseInt(costoMulta.getText())
-                          );
+                          ); // Se ingresa en la base de datos la configuracion del parqueo
               }
           } else {
               statusLabel.setText("Hay parqueos ya existentes en el intervalo indicado");
@@ -155,21 +157,25 @@ public class ConfigParqueo {
         }
     }
 
-    public void handleDeleteData(ActionEvent event) throws IOException { // REGISTRO
-        int inicioEspacio = Integer.parseInt(espaciosInicio.getText());
-        int finEspacio = Integer.parseInt(espaciosFin.getText());
+    /**
+     * Se maneja el borrado de informacion
+     * @param event
+     * @throws IOException
+     */
+    public void handleDeleteData(ActionEvent event) throws IOException {
+        int inicioEspacio = Integer.parseInt(espaciosInicio.getText()); // Se obtiene el espacio al inicio
+        int finEspacio = Integer.parseInt(espaciosFin.getText()); // Se obtiene el espacio al final
         boolean flag = true;
-        if(validacionDatosBorrado()) {
-            DatabaseManager databaseManager = new DatabaseManager();
-            for (int i = inicioEspacio; i <= finEspacio; i++) {
-                //System.out.println(databaseManager.verificarConfiguracionParqueoExistente(i));
+        if(validacionDatosBorrado()) { // Se validan los datos que se van a borrar
+            DatabaseManager databaseManager = new DatabaseManager(); // Se instancia el manejador de base de datos
+            for (int i = inicioEspacio; i <= finEspacio; i++) { // Se itera
                 if (databaseManager.verificarConfiguracionParqueoExistente(i)) {
                     flag = false;
                 }
             }
             if (!flag) {
-                for(int i = inicioEspacio; i <= finEspacio; i++){
-                    databaseManager.eliminarConfiguracionParqueo(i);
+                for(int i = inicioEspacio; i <= finEspacio; i++){ // Si la flag se conserva como deberia
+                    databaseManager.eliminarConfiguracionParqueo(i); // Se elimina la configuracion del parqueo eliminado
                 }
             } else {
                 statusLabel.setText("Hay parqueos que no existen en el intervalo");
@@ -180,7 +186,10 @@ public class ConfigParqueo {
     }
 
 
-
+    /**
+     * Se validan los datos que se estan poniendo en la entrada
+     * @return
+     */
     private boolean validacionDatos() {
         boolean isValid = true;
 
@@ -190,6 +199,7 @@ public class ConfigParqueo {
         Integer endH = endHour.getValue();
         Integer endM = endMinute.getValue();
 
+        // Se tiene que iniciar una hora de inicio y una hora de final
         if (startH == null || startM == null || endH == null || endM == null) {
             statusLabel.setText("Error: Debes seleccionar tanto la hora de inicio como la de fin.");
             isValid = false;
@@ -261,6 +271,10 @@ public class ConfigParqueo {
         return isValid;
     }
 
+    /**
+     * Funcion que permite validar la entrada de los datos que se van a borrar
+     * @return
+     */
     private boolean validacionDatosBorrado() {
         boolean isValid = true;
 

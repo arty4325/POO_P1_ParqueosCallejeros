@@ -9,7 +9,12 @@ public class MultasDAO {
 
     private final String DB_URL = "jdbc:sqlite:databases/parqueoscallejeros.db";
 
-    // Método para obtener todas las multas de la base de datos en un rango de tiempo
+    /**
+     * Muestra en una lista las multas que se han dado
+     * @param fechaInicio
+     * @param fechaFin
+     * @return
+     */
     public List<Multa> mostrarMultas(LocalDateTime fechaInicio, LocalDateTime fechaFin) {
         List<Multa> multas = new ArrayList<>();
         String sql = "SELECT * FROM Multas";

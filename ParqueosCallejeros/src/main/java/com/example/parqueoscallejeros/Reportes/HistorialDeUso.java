@@ -11,6 +11,15 @@ public class HistorialDeUso {
     private int tiempoOcupado;
     private Date fechaUso;
 
+    /**
+     * Constructor del historial de uso
+     * @param id id del usuario
+     * @param idUsuario id alfanumerico del usuario
+     * @param idEspacio id del espacio
+     * @param costo costo del espacio
+     * @param tiempoOcupado tiempo ocupado del espacio
+     * @param fechaUso fecha de uso del espacio
+     */
     public HistorialDeUso(int id, int idUsuario, int idEspacio, int costo, int tiempoOcupado, Date fechaUso) {
         this.id = id;
         this.idUsuario = idUsuario;

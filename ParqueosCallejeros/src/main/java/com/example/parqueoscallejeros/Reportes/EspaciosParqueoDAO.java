@@ -8,7 +8,11 @@ import java.util.List;
 public class EspaciosParqueoDAO {
     private final String DB_URL = "jdbc:sqlite:databases/parqueoscallejeros.db";
 
-    // Método para obtener todas las multas de la base de datos en un rango de tiempo
+    /**
+     * Obtiene todas las mltas en un rango de tiempo
+     * @param espacioMostrar
+     * @return
+     */
     public List<EspaciosParqueo> mostrarEspaciosParqueo(int espacioMostrar) {
         List<EspaciosParqueo> listEspaciosParqueo = new ArrayList<>();
         String sql = "SELECT * FROM EspaciosParqueo";

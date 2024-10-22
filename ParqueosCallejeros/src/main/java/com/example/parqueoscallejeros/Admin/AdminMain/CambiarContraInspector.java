@@ -41,6 +41,12 @@ public class CambiarContraInspector {
     @FXML
     private Label infoSend;
 
+    /**
+     * Permite configurar la informacion del usuario que proviene de la pantalla anterior
+     * @param id id del usuario
+     * @param userId id alfanumerico
+     * @param userPin pin del usuario
+     */
     public void setUserData(int id, String userId, String userPin) {
         System.out.println(id);
         System.out.println(userId);
@@ -52,6 +58,11 @@ public class CambiarContraInspector {
         nuevoPin.setDisable(true);
     }
 
+    /**
+     * Funcion que permite moverse a admin
+     * @param event
+     * @throws IOException
+     */
     public void switchToAdmin(ActionEvent event) throws IOException { // REGISTRO
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/parqueoscallejeros/Admin/AdminMainFunctions/AdminMain.fxml"));
         Parent root = loader.load();
@@ -63,26 +74,22 @@ public class CambiarContraInspector {
         stage.show();
     }
 
+    /**
+     * Funcion que permite enviar informacion del usuario
+     * @param event
+     * @throws IOException
+     * @throws MessagingException
+     */
     public void enviarInformacion(ActionEvent event) throws IOException, MessagingException { // REGISTRO
-        DatabaseManager databaseManager = new DatabaseManager();
-        if(databaseManager.existeInspector(inspectorCargado.getText())) {
+        DatabaseManager databaseManager = new DatabaseManager(); // Se instancia el manager de base de datos
+        if(databaseManager.existeInspector(inspectorCargado.getText())) { // Se revisa si existe el inspector
             inspectorCargado.setDisable(true);
             infoInspector.setText("Inspector Ingresado Existe");
 
-            // Quiero generar un codigo de verificacion que voy a mandar al correo del administrador
-            /**
-             *Random random = new Random();
-             *         int validacion = random.nextInt(900) + 100;
-             *
-             *         DatabaseManager databaseManager = new DatabaseManager();
-             *         databaseManager.actualizarCodigoCambioAdministrador(usuarioCambio.getText(), validacion);
-             *         String validacionString;
-             *         validacionString = Integer.toString(validacion);
-             */
             Random random = new Random();
-            int validacion = random.nextInt(900) + 100;
+            int validacion = random.nextInt(900) + 100; // Se le asigna un numero random al inspector
             String validacionString = Integer.toString(validacion);
-            databaseManager.actualizarCodigoCambioInspector(inspectorCargado.getText(), validacion);
+            databaseManager.actualizarCodigoCambioInspector(inspectorCargado.getText(), validacion); // Se carga este numero random a la db
 
             // Ahora deberia de mandar el correo
             String correoUsuario = databaseManager.obtenerCorreoAdministrador(userId);
@@ -96,7 +103,7 @@ public class CambiarContraInspector {
                             "<p>Muchas gracias por confiar en nosotros.</p>" +
                             "<p>Atentamente,<br>Parqueos Callejeros S.A</p>";
 
-            EnvioCorreos envioCorreos = new EnvioCorreos();
+            EnvioCorreos envioCorreos = new EnvioCorreos(); // Se manda sta informacion al usuario
             envioCorreos.createEmail(correoUsuario, "Cambio de contraseña Inspector", message);
             envioCorreos.sendEmail();
 
@@ -111,15 +118,21 @@ public class CambiarContraInspector {
     }
 
 
-    public void cargarPin(ActionEvent event) throws IOException, MessagingException { // REGISTRO
-        String nuevoPinText = nuevoPin.getText();
-        DatabaseManager databaseManager = new DatabaseManager();
+    /**
+     * Informacion permite mandar pin
+     * @param event
+     * @throws IOException
+     * @throws MessagingException
+     */
+    public void cargarPin(ActionEvent event) throws IOException, MessagingException {
+        String nuevoPinText = nuevoPin.getText(); // Se obtiene la informacion del pin
+        DatabaseManager databaseManager = new DatabaseManager(); // Se instancia el manejador de la base de datos
         // Validar que el nuevo PIN sea numérico y tenga exactamente 4 dígitos
         if (nuevoPinText.matches("\\d{4}")) {
             // Si pasa la validación, proceder con el registro o la lógica que quieras
             infoSend.setText("El PIN es válido.");
             if(codigoValidacion.getText().matches("\\d{3}")){
-                Integer validacionInt = Integer.parseInt(codigoValidacion.getText());
+                Integer validacionInt = Integer.parseInt(codigoValidacion.getText()); // Se revisa que el pin dado sea el mismo de la db
                 if(databaseManager.cambiarPinInspector(inspectorCargado.getText(), validacionInt, nuevoPinText)){
                     infoSend.setText("Se cambio el pin con exito");
                     // Aqui se tiene que mandar un correo de verificacion
@@ -138,7 +151,7 @@ public class CambiarContraInspector {
 
                     EnvioCorreos envioCorreos = new EnvioCorreos();
                     envioCorreos.createEmail(correoUsuario, "Cambio de contraseña Inspector", message);
-                    envioCorreos.sendEmail();
+                    envioCorreos.sendEmail(); // Se envia un correo confirmando la accion
 
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/parqueoscallejeros/Admin/AdminMainFunctions/AdminMain.fxml"));
                     Parent root = loader.load();
@@ -157,7 +170,6 @@ public class CambiarContraInspector {
         } else {
             // Si no es válido, mostrar un mensaje de error o manejar la excepción
             infoSend.setText("El PIN debe ser un número de 4 dígitos.");
-            // También puedes lanzar una excepción, mostrar un mensaje de alerta, etc.
         }
     }
 

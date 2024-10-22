@@ -18,6 +18,12 @@ public class MainController {
     private String userId;
     private String userPin;
 
+    /**
+     * Funcion que permite traer la informacion del usuario de la pantalla pasada a esta
+     * @param id Id del usuario
+     * @param userId id alfanumerico del usuario
+     * @param userPin pin del usuario
+     */
     public void setUserData(int id, String userId, String userPin) {
         System.out.println(id);
         System.out.println(userId);
@@ -27,7 +33,12 @@ public class MainController {
         this.userPin = userPin;
     }
 
-    public void switchToMain(ActionEvent event) throws IOException { // REGISTRO
+    /**
+     * Funcion que permite moverse a main
+     * @param event
+     * @throws IOException
+     */
+    public void switchToMain(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/parqueoscallejeros/Admin/AdminMainFunctions/ConfigParqueo.fxml"));
         Parent root = loader.load();
         ConfigParqueo controller = loader.getController();
@@ -38,7 +49,12 @@ public class MainController {
         stage.show();
     }
 
-    public void switchToAddInspectores(ActionEvent event) throws IOException { // REGISTRO
+    /**
+     * Funcion que permite moverse a la ventana que inspectores
+     * @param event
+     * @throws IOException
+     */
+    public void switchToAddInspectores(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/parqueoscallejeros/Admin/AdminMainFunctions/AgregarInspectores.fxml"));
         Parent root = loader.load();
         AddInspectores controller = loader.getController();
@@ -49,7 +65,12 @@ public class MainController {
         stage.show();
     }
 
-    public void switchToCambiarContraInspector(ActionEvent event) throws IOException { // REGISTRO
+    /**
+     * Permite cambiar a la ventana de cambiar la contra del inspector
+     * @param event
+     * @throws IOException
+     */
+    public void switchToCambiarContraInspector(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/parqueoscallejeros/Admin/AdminMainFunctions/CambiarContraInspector.fxml"));
         Parent root = loader.load();
         CambiarContraInspector controller = loader.getController();
@@ -59,7 +80,13 @@ public class MainController {
         stage.setScene(scene);
         stage.show();
     }
-    public void switchReportes(ActionEvent event) throws IOException { // CAMBIAR A REPORTES
+
+    /**
+     * Cambio a reportes
+     * @param event
+     * @throws IOException
+     */
+    public void switchReportes(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/parqueoscallejeros/Admin/AdminMainFunctions/AdminReport.fxml"));
         Parent root = loader.load();
         Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();

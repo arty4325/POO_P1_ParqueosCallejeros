@@ -11,6 +11,14 @@ public class Multa {
     private double costo;
     private Date fechaMultado;
 
+    /**
+     * Constructor de clase multa
+     * @param id id del usuario
+     * @param idInspector id del inspector
+     * @param placa placa del carro
+     * @param costo costo de la multa
+     * @param fechaMultado fecha en la que fue multado
+     */
     public Multa(int id, int idInspector, String placa, double costo, Date fechaMultado) {
         this.id = id;
         this.idInspector = idInspector;

@@ -7,7 +7,10 @@ import java.util.List;
 public class VehiculoDAO {
     private static final String DB_URL = "jdbc:sqlite:databases/parqueoscallejeros.db";
 
-    // Método para obtener todas las multas de la base de datos en un rango de tiempo
+    /**
+     * muestar los vehiculos con su info;
+     * @return
+     */
     public static List<Vehiculo> mostrarVehiculos() {
         List<Vehiculo> listVehiculo = new ArrayList<>();
         String sql = "SELECT * FROM Vehiculos";

@@ -8,6 +8,15 @@ public class Vehiculo {
     private int idUsuario;
     private int parqueado;
 
+    /**
+     * constructor de la clase vehiculo
+     * @param idVehiculo
+     * @param placa
+     * @param marca
+     * @param modelo
+     * @param idUsuario
+     * @param parqueado
+     */
     public Vehiculo(int idVehiculo, String placa, String marca, String modelo, int idUsuario, int parqueado) {
         this.idVehiculo = idVehiculo;
         this.placa = placa;

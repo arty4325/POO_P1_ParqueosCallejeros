@@ -31,15 +31,18 @@ public class Login {
     @FXML
     private Label infoInic;
 
+    /**
+     * Funcion que permite iniciar sesion a un inspector
+     * @param event
+     * @throws IOException
+     */
     public void inicSesion(ActionEvent event) throws IOException {
-        // Supongo que idContra es un campo de texto (TextField)
-        String contraString = idContra.getText(); // Asumo que idContra es un campo de entrada
+        String contraString = idContra.getText(); // id contra es un espacio de entrada
 
         // Validación de que solo contiene números y es de 4 dígitos
         if (contraString.matches("\\d{4}")) {
-            // Si es válido, puedes continuar con el proceso de inicio de sesión
+            // Si es válido, continua
             infoInic.setText("Pin valido");
-            // Aquí puedes llamar a tu lógica de autenticación o continuar con el flujo
             DatabaseManager databaseManager = new DatabaseManager();
             if(databaseManager.iniciarSesionInspector(idUsuario.getText(), idContra.getText())) {
                 System.out.println("Se ha iniciado la sesion");
@@ -68,9 +71,7 @@ public class Login {
 
 
         } else {
-            // Si no es válido, muestra un mensaje de error o maneja el caso
-            System.out.println("El PIN debe ser de 4 dígitos numéricos.");
-            // También puedes lanzar un mensaje de alerta en la UI si lo deseas
+            // mensaje a la ui
             infoInic.setText("Note que el pin tiene que ser de 4 digitos numericos");
         }
     }

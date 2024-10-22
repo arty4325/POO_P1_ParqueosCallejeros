@@ -62,6 +62,11 @@ public class generadorPdf {
 
     }
 
+    /**
+     * generador de las multas de usuario en pdf
+     * @throws FileNotFoundException
+     * @throws DocumentException
+     */
     public void multasUserPdf() throws FileNotFoundException, DocumentException {
         int userId = Session.getInstance().getUserId();
         LocalDateTime fechaInicioLDT = LocalDateTime.now().minusYears(10); // Desde hace 10 años
@@ -77,6 +82,13 @@ public class generadorPdf {
         reporte.cerrarDocumento();
         System.out.println("Reporte finalizado.");
     }
+
+    /**
+     * generador de multas pdf
+     * @param actionEvent
+     * @throws DocumentException
+     * @throws FileNotFoundException
+     */
     public void multasPdf(ActionEvent actionEvent) throws DocumentException, FileNotFoundException {
         try {
             // Llamar al método que obtiene el rango de fechas
@@ -99,6 +111,13 @@ public class generadorPdf {
             System.out.println(e.getMessage());
         }
     }
+
+    /**
+     * Dinero multas pdf
+     * @param actionEvent
+     * @throws DocumentException
+     * @throws FileNotFoundException
+     */
     public void dineroMultasPdf(ActionEvent actionEvent) throws DocumentException, FileNotFoundException {
         try {
             // Llamar al método que obtiene el rango de fechas
@@ -120,6 +139,12 @@ public class generadorPdf {
             System.out.println(e.getMessage());
         }
     }
+
+    /**
+     * genera el pdf del historial de un usuario
+     * @throws DocumentException
+     * @throws FileNotFoundException
+     */
     public void historialUsoUserPdf() throws DocumentException, FileNotFoundException {
         int userId = Session.getInstance().getUserId();
         LocalDateTime fechaInicioLDT = LocalDateTime.now().minusYears(10); // Desde hace 10 años
@@ -135,6 +160,13 @@ public class generadorPdf {
         reporte.cerrarDocumento();
         System.out.println("Reporte finalizado.");
     }
+
+    /**
+     * genera el pdf dle historial de uso
+     * @param actionEvent
+     * @throws DocumentException
+     * @throws FileNotFoundException
+     */
     public void historialUsoPdf(ActionEvent actionEvent) throws DocumentException, FileNotFoundException {
         try {
             // Llamar al método que obtiene el rango de fechas
@@ -157,6 +189,13 @@ public class generadorPdf {
         }
     }
 
+
+    /**
+     * genera un pdf del ingreso de dinero en un tiempo dado
+     * @param actionEvent
+     * @throws DocumentException
+     * @throws FileNotFoundException
+     */
     public void IngresoDineroPdf(ActionEvent actionEvent) throws DocumentException, FileNotFoundException {
         try {
             // Llamar al método que obtiene el rango de fechas
@@ -178,6 +217,12 @@ public class generadorPdf {
             System.out.println(e.getMessage());
         }
     }
+
+    /**
+     * genera un pdf de todos los espacios de paruqeos
+     * @throws DocumentException
+     * @throws FileNotFoundException
+     */
     public void EspacioParqueoTodos() throws DocumentException, FileNotFoundException {
         int estado=0;
         Reportes reporte = new Reportes();
@@ -196,7 +241,12 @@ public class generadorPdf {
         System.out.println("Reporte finalizado.");
 
     }
-    // Método para espacios ocupados
+
+    /**
+     * genera un historial para todos los paruqeos que estan ocupados
+     * @throws DocumentException
+     * @throws FileNotFoundException
+     */
     public void EspacioParqueoOcupados() throws DocumentException, FileNotFoundException {
         int estado=0;
         Reportes reporte = new Reportes();
@@ -211,7 +261,12 @@ public class generadorPdf {
         reporte.cerrarDocumento();
         System.out.println("Reporte finalizado.");
     }
-    // Método para espacios vacíos
+
+    /**
+     * genera reporte de los espacios vacios en pdf
+     * @throws DocumentException
+     * @throws FileNotFoundException
+     */
     public void EspacioParqueoVacios() throws DocumentException, FileNotFoundException {
         int estado=0;
         Reportes reporte = new Reportes();
@@ -224,6 +279,13 @@ public class generadorPdf {
         reporte.cerrarDocumento();
         System.out.println("Reporte finalizado.");
     }
+
+    /**
+     * reporte detallado de lo ocurrido en los paruqos
+     * @param actionEvent
+     * @throws DocumentException
+     * @throws FileNotFoundException
+     */
     public void reporteDetalladoPdf(ActionEvent actionEvent) throws DocumentException, FileNotFoundException {
         try {
             // Llamar al método que obtiene el rango de fechas
@@ -249,6 +311,12 @@ public class generadorPdf {
         }
     }
 
+    /**
+     * gener aun reporte resumido en un pdf
+     * @param actionEvent
+     * @throws DocumentException
+     * @throws FileNotFoundException
+     */
     public void reporteResumidoPdf(ActionEvent actionEvent) throws DocumentException, FileNotFoundException {
         try {
             // Llamar al método que obtiene el rango de fechas

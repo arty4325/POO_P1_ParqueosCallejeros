@@ -8,7 +8,12 @@ import java.util.List;
 public class ReservaDao {
     private final String DB_URL = "jdbc:sqlite:databases/parqueoscallejeros.db";
 
-    // Método para obtener todas las multas de la base de datos en un rango de tiempo
+    /**
+     * este metodo muestra todas las multas en un periodo de tiempo
+     * @param fechaInicio
+     * @param fechaFin
+     * @return una lista con las reservas
+     */
     public List<Reserva> mostrarReserva(LocalDateTime fechaInicio, LocalDateTime fechaFin) {
         List<Reserva> reservas = new ArrayList<>();
         String sql = "SELECT * FROM Reservas";

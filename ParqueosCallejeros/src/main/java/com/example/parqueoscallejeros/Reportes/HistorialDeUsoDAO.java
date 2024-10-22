@@ -8,7 +8,12 @@ import java.util.List;
 public class HistorialDeUsoDAO {
     private final String DB_URL = "jdbc:sqlite:databases/parqueoscallejeros.db";
 
-    // Método para obtener todas las multas de la base de datos en un rango de tiempo
+    /**
+     * Este metodo permite tener las multas en un periodo de tiempo
+     * @param fechaInicio
+     * @param fechaFin
+     * @return
+     */
     public List<HistorialDeUso> mostrarHistorialUso(LocalDateTime fechaInicio, LocalDateTime fechaFin) {
         List<HistorialDeUso> historial = new ArrayList<>();
         String sql = "SELECT * FROM HistorialUso";

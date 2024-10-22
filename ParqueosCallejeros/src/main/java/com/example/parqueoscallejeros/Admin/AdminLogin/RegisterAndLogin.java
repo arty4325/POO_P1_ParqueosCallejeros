@@ -19,6 +19,9 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Random;
 
+/**
+ * Clase que permite hacer el registro y el login para el administrador
+ */
 public class RegisterAndLogin {
     private Stage stage;
     private Scene scene;
@@ -62,7 +65,12 @@ public class RegisterAndLogin {
     private TextField cambioPin;
 
 
-    public void switchToMain(ActionEvent event) throws IOException { // REGISTRO
+    /**
+     * Permite volver a la pantalla main
+     * @param event
+     * @throws IOException
+     */
+    public void switchToMain(ActionEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/com/example/parqueoscallejeros/Admin/AdminLogin/Scene1.fxml"));
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -70,7 +78,12 @@ public class RegisterAndLogin {
         stage.show();
     }
 
-    public void switchToSignIn(ActionEvent event) throws IOException { // REGISTRO
+    /**
+     * Permite moverse a la pantalla de inicio de sesion
+     * @param event
+     * @throws IOException
+     */
+    public void switchToSignIn(ActionEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/com/example/parqueoscallejeros/Admin/AdminLogin/Scene4.fxml"));
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -78,7 +91,13 @@ public class RegisterAndLogin {
         stage.show();
     }
 
-    public void switchToVerify(ActionEvent event) throws IOException { // REGISTRO
+
+    /**
+     * Permite volver a la ventana para verificar usuario
+     * @param event
+     * @throws IOException
+     */
+    public void switchToVerify(ActionEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/com/example/parqueoscallejeros/Admin/AdminLogin/Scene3.fxml"));
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -86,6 +105,11 @@ public class RegisterAndLogin {
         stage.show();
     }
 
+    /**
+     * Permite moverse a la quinta pantalla de configuracion
+     * @param event
+     * @throws IOException
+     */
     public void switchToScene5(ActionEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/com/example/parqueoscallejeros/Admin/AdminLogin/Scene5.fxml"));
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
@@ -94,6 +118,11 @@ public class RegisterAndLogin {
         stage.show();
     }
 
+    /**
+     * Permite moverse a la sexta pantalla de configuracion
+     * @param event
+     * @throws IOException
+     */
     public void switchToScene6(ActionEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/com/example/parqueoscallejeros/Admin/AdminLogin/Scene6.fxml"));
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
@@ -102,18 +131,23 @@ public class RegisterAndLogin {
         stage.show();
     }
 
-    public void sendSignIn(ActionEvent event) throws IOException { // REGISTRO
-        if(validarDatosRegistro()){
-            DatabaseManager databaseManager = new DatabaseManager();
-            Random random = new Random();
+    /**
+     * Envia a la base de datos la informacion de incio de sesion
+     * @param event
+     * @throws IOException
+     */
+    public void sendSignIn(ActionEvent event) throws IOException {
+        if(validarDatosRegistro()){ // Se corre una funcion que valida que las entradas sean correctas
+            DatabaseManager databaseManager = new DatabaseManager(); // Se instancia el manejador de base de datos
+            Random random = new Random(); // Se crea un numero random
             int validacion = random.nextInt(900) + 100; // Genera un número entre 100 y 999
-            System.out.println("Código de validación: " + validacion); // este es el número de validación
+            System.out.println("Código de validación: " + validacion); // Este numero random el usuario no lo ve y es el numero de validacion
             String validacionString = Integer.toString(validacion);
 
-            LocalDate fechaActual = LocalDate.now();
+            LocalDate fechaActual = LocalDate.now(); // Se consigue la fecha actual del sistema
 
 
-            try {
+            try { // Se intenta registrar el administrador en la base de datos
                 databaseManager.insertarAdministrador(regNombre.getText()
                 , regApellidos.getText(), regTelefono.getText(), regCorreo.getText(),
                 regDireccion.getText(), fechaActual, regIdentificacion.getText(), regPin.getText(), validacionString);
@@ -124,7 +158,7 @@ public class RegisterAndLogin {
                                 "<p>Muchas gracias por confiar en nosotros.</p>" +
                                 "<p>Atentamente,<br>Parqueos Callejeros S.A</p>";
 
-                EnvioCorreos envioCorreos = new EnvioCorreos();
+                EnvioCorreos envioCorreos = new EnvioCorreos(); // Se envia el correo electronico de verificacion despues de registrar
                 envioCorreos.createEmail(regCorreo.getText(), "Confirmacion Correos Callejeros", message);
                 envioCorreos.sendEmail();
                 signLabel.setText("Usuario Registrado");
@@ -132,7 +166,6 @@ public class RegisterAndLogin {
 
             } catch (Exception e) {
                 // Captura cualquier excepción que ocurra durante la inserción en la base de datos
-                //infoLabel.setText("No se pudo subir la información a la base de datos.");
                 signLabel.setText("No se pudo subir la informacion en la base de datos");
                 System.err.println("Error al insertar el usuario: " + e.getMessage());
                 e.printStackTrace(); // Para imprimir el error completo en la consola
@@ -141,20 +174,31 @@ public class RegisterAndLogin {
 
     }
 
+    /**
+     * Funcion que envia la informacion de verificacion a la base de datos
+     * @param event
+     * @throws IOException
+     */
     public void sendVerificationInfo(ActionEvent event) throws IOException {
-        DatabaseManager databaseManager = new DatabaseManager();
-        if(databaseManager.verificarAdministrador(idAdminVal.getText(), idAdminPinVal.getText(), idAdminCodVal.getText())){
-            verificationLabel.setText("Se ha registrado el administrador");
+        DatabaseManager databaseManager = new DatabaseManager(); // Se intancia el manejador de base de datos
+        if(databaseManager.verificarAdministrador(idAdminVal.getText(), idAdminPinVal.getText(), idAdminCodVal.getText())){ // Se verifica el administrador en la db
+            verificationLabel.setText("Se ha registrado el administrador"); // Se coloca en pantalla un mensaje de feedback
         } else {
             verificationLabel.setText("No se ha verificado el administrador");
         }
     }
 
-    public void handleSignIn(ActionEvent event) throws IOException {
-        DatabaseManager databaseManager = new DatabaseManager();
-        if(databaseManager.iniciarSesionAdmin(sendAdminUser.getText(), sendAdminPassword.getText())){
-            int id = databaseManager.obtenerIdAdmin(sendAdminUser.getText(), sendAdminPassword.getText());
+    /**
+     * Funcion que permite iniciar sesion en la base de datos
+     * @param event
+     * @throws IOException
+     */
+    public void handleSignIn(ActionEvent event) throws IOException { // Esto permite iniciar sesion
+        DatabaseManager databaseManager = new DatabaseManager(); // Se instancia el manejador de la base de datos
+        if(databaseManager.iniciarSesionAdmin(sendAdminUser.getText(), sendAdminPassword.getText())){ // Se le envia el nombre de usuario y la contra
+            int id = databaseManager.obtenerIdAdmin(sendAdminUser.getText(), sendAdminPassword.getText()); // Se obtiene el id unico para ese admin
 
+            // Se abre la pantalla main de admin main
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/parqueoscallejeros/Admin/AdminMainFunctions/AdminMain.fxml"));
             Parent root = loader.load();
 
@@ -175,6 +219,10 @@ public class RegisterAndLogin {
         }
     }
 
+    /**
+     * Esto permite validar que los datos en los entrys es correcto
+     * @return Devuelve feedback de la estructura de los entrys
+     */
     public boolean validarDatosRegistro() {
         // Validar nombre
         if (regNombre.getText() == null || regNombre.getText().isEmpty()) {
@@ -223,13 +271,18 @@ public class RegisterAndLogin {
         return true;
     }
 
-
+    /**
+     * Manejador que permite manejar el cambio de informacion
+     * @param event
+     * @throws IOException
+     * @throws MessagingException
+     */
     public void handleChangeData(ActionEvent event) throws IOException, MessagingException {
         Random random = new Random();
-        int validacion = random.nextInt(900) + 100;
+        int validacion = random.nextInt(900) + 100; // Obtiene un numero random que se usa para cambiar la informacion
 
-        DatabaseManager databaseManager = new DatabaseManager();
-        databaseManager.actualizarCodigoCambioAdministrador(usuarioCambio.getText(), validacion);
+        DatabaseManager databaseManager = new DatabaseManager(); // Se instancia el manejador de base de datos
+        databaseManager.actualizarCodigoCambioAdministrador(usuarioCambio.getText(), validacion); // Se envia la informacoin de cambio de usurio y el codigo de validacion
         String validacionString;
         validacionString = Integer.toString(validacion);
 
@@ -241,7 +294,7 @@ public class RegisterAndLogin {
                         "<p>Muchas gracias por confiar en nosotros.</p>" +
                         "<p>Atentamente,<br>Parqueos Callejeros S.A</p>";
 
-        EnvioCorreos envioCorreos = new EnvioCorreos();
+        EnvioCorreos envioCorreos = new EnvioCorreos(); // Se envia un correo electronico de verificacion de esta accion
         envioCorreos.createEmail(correo, "Cambio de Contraseña " + usuarioCambio.getText(), message);
         envioCorreos.sendEmail();
 
@@ -254,8 +307,13 @@ public class RegisterAndLogin {
 
     }
 
+    /**
+     * Maneja el cambio de pin
+     * @param event
+     * @throws IOException
+     */
     public void handleSetNewPin(ActionEvent event) throws IOException {
-        DatabaseManager databaseManager = new DatabaseManager();
+        DatabaseManager databaseManager = new DatabaseManager(); // Se instancia el manejador de base de datos
 
         String identificacion = cambioIdentificacion.getText();
         String codigoTexto = cambioCodigo.getText();

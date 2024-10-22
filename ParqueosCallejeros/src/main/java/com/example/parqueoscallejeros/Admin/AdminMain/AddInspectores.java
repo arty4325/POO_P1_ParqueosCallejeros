@@ -53,8 +53,12 @@ public class AddInspectores {
     @FXML
     private Label messageInfo;
 
-
-    public void switchToAdmin(ActionEvent event) throws IOException { // REGISTRO
+    /**
+     * Funciopn que permite moverse a admin main
+     * @param event
+     * @throws IOException
+     */
+    public void switchToAdmin(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/parqueoscallejeros/Admin/AdminMainFunctions/AdminMain.fxml"));
         Parent root = loader.load();
         MainController controller = loader.getController();
@@ -66,6 +70,12 @@ public class AddInspectores {
     }
 
 
+    /**
+     * Permite configurar la inforamcino del usuario que proviene de la ventana anterior
+     * @param id El id del usuario
+     * @param userId el id alfanumerico del usuario
+     * @param userPin el pin del usuario
+     */
     public void setUserData(int id, String userId, String userPin) {
         System.out.println(id);
         System.out.println(userId);
@@ -76,7 +86,10 @@ public class AddInspectores {
     }
 
 
-
+    /**
+     * Funcion que permite validar los datos del inspector
+     * @throws MessagingException
+     */
     public void validarDatosInspector() throws MessagingException {
         // Nombre: string de 2 a 20 caracteres
         String nombre = varNombre.getText();
@@ -158,7 +171,7 @@ public class AddInspectores {
 
         EnvioCorreos envioCorreos = new EnvioCorreos();
         envioCorreos.createEmail(correoUsuario, "Se agrego un Inspector", message);
-        envioCorreos.sendEmail();
+        envioCorreos.sendEmail(); // Si toda la informacion es correcta entonces se manda la informacion en un correo electronico
 
 
     }
