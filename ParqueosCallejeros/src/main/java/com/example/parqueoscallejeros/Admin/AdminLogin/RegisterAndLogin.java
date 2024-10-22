@@ -11,6 +11,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
@@ -40,19 +41,19 @@ public class RegisterAndLogin {
     @FXML
     private TextField regIdentificacion;
     @FXML
-    private TextField regPin;
+    private PasswordField regPin;
     @FXML
     private Label signLabel;
     @FXML
     private TextField idAdminVal;
     @FXML
-    private TextField idAdminPinVal;
+    private PasswordField idAdminPinVal;
     @FXML
-    private TextField idAdminCodVal;
+    private PasswordField idAdminCodVal;
     @FXML
     private TextField sendAdminUser;
     @FXML
-    private TextField sendAdminPassword;
+    private PasswordField sendAdminPassword;
     @FXML
     private Label verificationLabel;
     @FXML
@@ -60,9 +61,9 @@ public class RegisterAndLogin {
     @FXML
     private TextField cambioIdentificacion;
     @FXML
-    private TextField cambioCodigo;
+    private PasswordField cambioCodigo;
     @FXML
-    private TextField cambioPin;
+    private PasswordField cambioPin;
 
 
     /**
@@ -84,6 +85,15 @@ public class RegisterAndLogin {
      * @throws IOException
      */
     public void switchToSignIn(ActionEvent event) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("/com/example/parqueoscallejeros/Admin/AdminLogin/Scene2.fxml"));
+        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+
+    public void switchToLogIN(ActionEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/com/example/parqueoscallejeros/Admin/AdminLogin/Scene4.fxml"));
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         scene = new Scene(root);
