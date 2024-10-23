@@ -1,17 +1,27 @@
 package com.example.parqueoscallejeros.Reportes;
 
+import com.example.parqueoscallejeros.Admin.AdminMain.MainController;
 import com.itextpdf.text.DocumentException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 public class generadorPdf {
+    private Stage stage;
+    private Scene scene;
+    private Parent root;
     @FXML
     private DatePicker fechaInicioPicker;
 
@@ -40,6 +50,29 @@ public class generadorPdf {
         LocalDateTime fechaFinLDT = LocalDateTime.of(fechaFin, LocalTime.MAX); // 23:59:59.999999999
 
         return new LocalDateTime[] {fechaInicioLDT, fechaFinLDT}; // Retornar el rango de fechas
+    }
+    public void switchToMainAdmin(ActionEvent event) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("/com/example/parqueoscallejeros/Admin/AdminMainFunctions/AdminMain.fxml"));
+        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    public void switchToMainUser(ActionEvent event) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("/com/example/parqueoscallejeros/User/UserMainFunctions/UsuarioMain.fxml"));
+        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    public void switchToMainInspector(ActionEvent event) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("/com/example/parqueoscallejeros/Inspectores/InspectoresMain/MainInspectores.fxml"));
+        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
     }
     @FXML
     private int[] obtenerRangoDeParqueos() {
