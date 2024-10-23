@@ -11,6 +11,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
@@ -26,7 +27,7 @@ public class Login {
     private TextField idUsuario;
 
     @FXML
-    private TextField idContra;
+    private PasswordField idContra;
 
     @FXML
     private Label infoInic;

@@ -14,6 +14,7 @@ import javafx.scene.Scene;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
@@ -53,7 +54,7 @@ public class RegisterAndLogin {
     private TextField idUsuario;
 
     @FXML
-    private TextField pinUsuario;
+    private PasswordField pinUsuario;
 
     @FXML
     private Label infoLabel;
@@ -69,16 +70,16 @@ public class RegisterAndLogin {
     private TextField idUsuarioVal;
 
     @FXML
-    private TextField idPinVal;
+    private PasswordField idPinVal;
 
     @FXML
-    private TextField idCodigoVal;
+    private PasswordField idCodigoVal;
 
     @FXML
     private TextField inicUsuario;
 
     @FXML
-    private TextField inicContra;
+    private PasswordField inicContra;
 
     @FXML
     private TextField usuarioCambio;
@@ -87,10 +88,10 @@ public class RegisterAndLogin {
     private TextField cambioIdentificacion;
 
     @FXML
-    private TextField cambioCodigo;
+    private PasswordField cambioCodigo;
 
     @FXML
-    private TextField cambioPin;
+    private PasswordField cambioPin;
 
     public void switchToScene1(ActionEvent event) throws IOException { // INICIO
         Parent root = FXMLLoader.load(getClass().getResource("/com/example/parqueoscallejeros/User/UserLogin/Scene1.fxml"));

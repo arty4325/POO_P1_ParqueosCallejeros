@@ -2,6 +2,7 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
@@ -17,11 +18,10 @@
       <Text layoutX="162.0" layoutY="204.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Usuario" />
       <Text layoutX="153.0" layoutY="247.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Contrasena" />
       <TextField fx:id="inicUsuario" layoutX="237.0" layoutY="188.0" />
-      <TextField fx:id="inicContra" layoutX="237.0" layoutY="230.0" />
       <Button layoutX="300.0" layoutY="267.0" mnemonicParsing="false" onAction="#handleSignIn" text="Iniciar Sesion" />
       <Button layoutX="536.0" layoutY="361.0" mnemonicParsing="false" onAction="#switchToScene1" text="Volver" />
       <Label fx:id="signInLabel" layoutX="186.0" layoutY="101.0" prefHeight="17.0" prefWidth="228.0" />
+      <PasswordField fx:id="inicContra" layoutX="238.0" layoutY="230.0" />
    </children>
 
 </AnchorPane>
-
